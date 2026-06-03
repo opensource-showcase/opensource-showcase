@@ -1,7 +1,7 @@
 # opensource-showcase
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/opensource-showcase/opensource-showcase/main/images/logo-banner.png" alt="opensource-showcase" width="600">
+  <img width="1360" height="800" alt="logo-banner" src="https://github.com/user-attachments/assets/8c7f9fa9-904e-4734-9f68-3b9b882f4ea6" />
 </p>
 
 <p align="center">
