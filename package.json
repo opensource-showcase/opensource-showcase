@@ -1,6 +1,6 @@
 {
   "name": "opensource-showcase",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "CLI tool to curate and showcase your open source contributions",
   "type": "module",
   "main": "dist/cli.js",
@@ -37,12 +37,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hasithasandunlakshan/opensource-showcase.git"
+    "url": "git+https://github.com/opensource-showcase/opensource-showcase.git"
   },
   "bugs": {
-    "url": "https://github.com/hasithasandunlakshan/opensource-showcase/issues"
+    "url": "https://github.com/opensource-showcase/opensource-showcase/issues"
   },
-  "homepage": "https://github.com/hasithasandunlakshan/opensource-showcase#readme",
+  "homepage": "https://github.com/opensource-showcase/opensource-showcase#readme",
   "engines": {
     "node": ">=18.0.0"
   },

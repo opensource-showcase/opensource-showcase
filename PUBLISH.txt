@@ -22,9 +22,9 @@ Use this when you are ready to publish `opensource-showcase` to npm.
 
 4. Update package metadata in `package.json`:
    - `author`
-   - `repository.url`
-   - `bugs.url`
-   - `homepage`
+   - `repository.url` (already set to https://github.com/opensource-showcase/opensource-showcase.git)
+   - `bugs.url` (already set to https://github.com/opensource-showcase/opensource-showcase/issues)
+   - `homepage` (already set to https://github.com/opensource-showcase/opensource-showcase#readme)
    - package `name` if `opensource-showcase` is taken
 
 5. Run checks:
