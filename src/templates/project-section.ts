@@ -25,11 +25,11 @@ export function generateProjectSection(
   const prCards = sorted.map((pr) => generatePRCard(pr)).join('\n');
 
   return `
-### <img src="https://github.com/${owner}.png" width="32" height="32" style="vertical-align: middle; border-radius: 6px; margin-right: 8px;" alt="${owner}"/> [${repo}](https://github.com/${repo})
+### <img src="https://github.com/${owner}.png" width="28" height="28" align="absmiddle" alt="${owner}"> [${repo}](https://github.com/${repo})
 
 ${repo_description || 'Open source project'}
 
-**${count} contribution${count !== 1 ? 's' : ''}** • ${language ? `${language}` : ''} • **⭐ ${stars}**
+**${count} contribution${count !== 1 ? 's' : ''}** • ${language ? `${language}` : ''} • **★ ${stars}**
 
 ${prCards}
 
@@ -50,9 +50,10 @@ function generatePRCard(pr: EnrichedContribution): string {
     .replace(/^(feat|fix|chore|docs|refactor|test|style|perf):\s*/i, '')
     .replace(/^(feat|fix|chore|docs|refactor|test|style|perf)\(.*?\):\s*/i, '');
 
-  // GitHub-style diff badges
-  const addBadge = `![](https://img.shields.io/badge/+${pr.additions}-2da44e?style=flat-square)`;
-  const delBadge = `![](https://img.shields.io/badge/-${pr.deletions}-cf222e?style=flat-square)`;
+  const mergedIcon =
+    '<img src="https://raw.githubusercontent.com/primer/octicons/main/icons/git-merge-16.svg" width="16" height="16" align="absmiddle" alt="Merged" title="Merged pull request">';
+  const addBadge = `<code>+${pr.additions.toLocaleString()}</code>`;
+  const delBadge = `<code>-${pr.deletions.toLocaleString()}</code>`;
 
   // Reviewer information
   let reviewBullet = '';
@@ -61,7 +62,7 @@ function generatePRCard(pr: EnrichedContribution): string {
       .slice(0, 3)
       .map(
         (r) =>
-          `<img src="${r.avatar_url}" width="28" height="28" style="border-radius: 50%; border: 2px solid #2da44e; vertical-align: middle;" alt="${r.login}" title="${r.login}"/>`
+          `<img src="${r.avatar_url}" width="24" height="24" align="absmiddle" alt="${r.login}" title="${r.login}">`
       )
       .join(' ');
     reviewBullet = `- **Approved by:** ${reviewerAvatars}`;
@@ -70,7 +71,6 @@ function generatePRCard(pr: EnrichedContribution): string {
   }
 
   const bullets = [
-    `- **Merged:** ${date}`,
     `- **Changes:** ${addBadge} ${delBadge} across ${pr.files_changed.toLocaleString()} file${pr.files_changed === 1 ? '' : 's'}`,
     pr.language ? `- **Language:** ${pr.language}` : '',
     reviewBullet,
@@ -81,7 +81,9 @@ function generatePRCard(pr: EnrichedContribution): string {
 
   return `---
 
-#### [${cleanTitle}](${pr.pr_url})
+#### ${mergedIcon} [${cleanTitle}](${pr.pr_url}) <sub>[#${pr.pr_number}](${pr.pr_url})</sub>
+
+<sub><strong>Merged</strong> on ${date}</sub>
 
 ${bullets.join('\n')}
 ${description}

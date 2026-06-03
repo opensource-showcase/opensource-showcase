@@ -6,6 +6,12 @@ function stringifyScriptJson(value: string): string {
   return JSON.stringify(value).replace(/</g, '\\u003c');
 }
 
+function renderMergeIcon(): string {
+  return `<svg class="merge-icon" viewBox="0 0 16 16" aria-hidden="true">
+    <path d="M5 3.25a2.25 2.25 0 1 1-2.75-2.193v9.886A2.25 2.25 0 1 1 .75 13V3.057A2.25 2.25 0 1 1 5 3.25Zm-2.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Zm0 9.5a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5ZM14.75 3.25a2.25 2.25 0 0 1-3 2.122v.878A3.75 3.75 0 0 1 8 10H6.75a.75.75 0 0 1 0-1.5H8a2.25 2.25 0 0 0 2.25-2.25v-.878a2.25 2.25 0 1 1 4.5-2.122Zm-2.25-.75a.75.75 0 1 0 0 1.5.75.75 0 0 0 0-1.5Z"></path>
+  </svg>`;
+}
+
 export function renderHero(contributor: Contributor, _stats: SiteStats): string {
   const displayName = contributor.name || contributor.username;
 
@@ -57,7 +63,7 @@ export function renderRepositorySection(
                 ${first.repo_description ? `<p>${escapeHtml(first.repo_description)}</p>` : ''}
               </div>
               <div class="repo-stats">
-                <span>${first.repo_stars.toLocaleString()} stars</span>
+                <span aria-label="${first.repo_stars.toLocaleString()} stars">★ ${first.repo_stars.toLocaleString()}</span>
                 <span>${sorted.length} PR${sorted.length === 1 ? '' : 's'}</span>
               </div>
             </header>
@@ -100,7 +106,11 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
     : '';
 
   return `<article class="contribution" data-title="${escapeHtml(contribution.pr_title)}" data-language="${escapeHtml(language)}">
-                <a class="pr-title" href="${escapeHtml(contribution.pr_url)}">${escapeHtml(contribution.pr_title)}</a>
+                <div class="pr-heading">
+                  <span class="merge-icon-wrap" title="Merged pull request">${renderMergeIcon()}</span>
+                  <a class="pr-title" href="${escapeHtml(contribution.pr_url)}">${escapeHtml(contribution.pr_title)}</a>
+                  <a class="pr-number" href="${escapeHtml(contribution.pr_url)}">#${contribution.pr_number.toLocaleString()}</a>
+                </div>
                 
                 ${
                   description

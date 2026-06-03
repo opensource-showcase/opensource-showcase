@@ -92,7 +92,9 @@ export function renderStyles(): string {
         padding: 24px;
         background: var(--panel-soft);
         border: 1px solid var(--border-default);
+        border-left: 4px solid var(--accent);
         border-radius: 6px;
+        box-shadow: 0 1px 0 rgba(27, 31, 36, 0.04);
       }
 
       .repo-header { 
@@ -100,8 +102,11 @@ export function renderStyles(): string {
         justify-content: space-between; 
         align-items: flex-start;
         gap: 24px; 
-        padding-bottom: 16px; 
+        margin: -24px -24px 0;
+        padding: 16px 20px 16px; 
+        background: linear-gradient(180deg, var(--panel) 0%, var(--panel-soft) 100%);
         border-bottom: 1px solid var(--border-default);
+        border-radius: 2px 6px 0 0;
       }
       
       .repo-title-area {
@@ -153,7 +158,7 @@ export function renderStyles(): string {
       }
 
       /* Contribution Details - Recruiter Optimized */
-      .contribution-list { display: grid; gap: 16px; margin-top: 16px; }
+      .contribution-list { display: grid; gap: 16px; margin-top: 20px; }
       .contribution { 
         padding: 16px; 
         border: 1px solid var(--border-default); 
@@ -165,16 +170,50 @@ export function renderStyles(): string {
         border-color: var(--muted);
         box-shadow: var(--shadow);
       }
+      .pr-heading {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        min-width: 0;
+        margin-bottom: 8px;
+      }
+
+      .merge-icon-wrap {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto;
+        width: 16px;
+        height: 16px;
+        color: #8250df;
+      }
+
+      .merge-icon {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+      }
+
       .pr-title { 
         font-weight: 600; 
         font-size: 1rem; 
-        display: block; 
-        margin-bottom: 8px;
+        min-width: 0;
         color: var(--accent);
       }
       .pr-title:hover {
         color: var(--accent-hover);
         text-decoration: underline;
+      }
+
+      .pr-number {
+        flex: 0 0 auto;
+        color: var(--muted);
+        font-size: 0.875rem;
+        font-weight: 500;
+      }
+
+      .pr-number:hover {
+        color: var(--accent-hover);
       }
 
       .brief-description {

@@ -15,10 +15,12 @@ export function generateHeader(
   const { username, name, profile_url, bio, location, website, twitter } = contributor;
   const displayName = name || username;
   const avatarUrl = `https://github.com/${username}.png`;
+  const webPortfolioUrl = `https://${username}.github.io/.opensource/`;
 
   // Build contact links
   const links = [];
   links.push(`[GitHub](${profile_url})`);
+  links.push(`[Web Portfolio](${webPortfolioUrl})`);
   if (website) links.push(`[Website](${website})`);
   if (twitter) links.push(`[Twitter](https://twitter.com/${twitter})`);
 
