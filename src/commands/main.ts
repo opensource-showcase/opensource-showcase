@@ -39,12 +39,12 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
     try {
       authContext = await getAuthenticatedClient();
     } catch {
-      logger.warning('Stored token expired or invalid.');
+      logger.warning('Saved GitHub login expired or invalid.');
       logger.info('Starting browser login again...');
       authContext = await authenticateWithGitHub();
     }
   } else {
-    // First time - use GitHub Device Flow so users do not have to create tokens.
+    // First time - use GitHub Device Flow so users do not have to configure credentials.
     logger.info('First time setup. Starting GitHub browser login...');
     authContext = await authenticateWithGitHub();
   }

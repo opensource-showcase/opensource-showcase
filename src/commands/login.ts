@@ -1,5 +1,5 @@
 /**
- * Login command: authenticate with GitHub and save the token.
+ * Login command: authenticate with GitHub and save the session.
  */
 
 import { authenticateWithGitHub } from '../auth/github-auth.js';

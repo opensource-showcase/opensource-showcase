@@ -4,7 +4,6 @@
  * CLI entry point for opensource-showcase
  */
 
-import 'dotenv/config';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { logger } from './utils/logger.js';

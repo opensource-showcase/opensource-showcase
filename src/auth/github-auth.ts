@@ -17,10 +17,8 @@ import {
 } from '../utils/config.js';
 import type { AuthContext } from '../types/index.js';
 
-// GitHub OAuth App credentials
-// Public Client ID for all users
 const DEFAULT_CLIENT_ID = 'YOUR_PUBLIC_CLIENT_ID_HERE';
-const CLIENT_ID = process.env.GITHUB_CLIENT_ID || DEFAULT_CLIENT_ID;
+const CLIENT_ID = DEFAULT_CLIENT_ID;
 const CLIENT_TYPE = 'oauth-app';
 
 interface OAuthTokenResponse {
@@ -33,7 +31,7 @@ interface OAuthTokenResponse {
 export async function authenticateWithGitHub(): Promise<AuthContext> {
   if (!isOAuthConfigured()) {
     throw new AuthenticationError(
-      'GitHub OAuth is not configured. Set GITHUB_CLIENT_ID while developing, or replace the default client ID before publishing.'
+      'GitHub OAuth is not configured. Replace YOUR_PUBLIC_CLIENT_ID_HERE in src/auth/github-auth.ts before publishing.'
     );
   }
 
@@ -97,13 +95,13 @@ export function isOAuthConfigured(): boolean {
 }
 
 /**
- * Create Octokit instance from stored token
+ * Create Octokit instance from the saved GitHub login
  */
 export async function getAuthenticatedClient(): Promise<AuthContext> {
   const authToken = getStoredToken();
 
   if (!authToken) {
-    throw new AuthenticationError('No stored token found. Please login first.');
+    throw new AuthenticationError('No saved GitHub login found. Please login first.');
   }
 
   const octokit = new Octokit({ auth: authToken });
@@ -114,7 +112,7 @@ export async function getAuthenticatedClient(): Promise<AuthContext> {
   } catch (error) {
     const err = error as { status?: number; message?: string };
     if (err.status === 401) {
-      throw new AuthenticationError('Token expired or invalid. Please login again.');
+      throw new AuthenticationError('Saved GitHub login expired or invalid. Please login again.');
     }
     throw new AuthenticationError(
       `Authentication verification failed: ${err.message ?? 'Unknown error'}`

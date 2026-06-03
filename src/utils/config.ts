@@ -13,7 +13,6 @@ import { ConfigurationError } from './errors.js';
 // Persistent storage for auth tokens and cache
 export const store = new Conf({
   projectName: APP_NAME,
-  encryptionKey: process.env.ENCRYPTION_KEY,
 });
 
 /**
