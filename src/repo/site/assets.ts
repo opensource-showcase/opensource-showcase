@@ -32,60 +32,72 @@ export function renderStyles(): string {
       }
 
       .shell {
-        width: min(1120px, calc(100% - 32px));
+        width: min(1680px, calc(100% - 32px));
         margin: 0 auto;
       }
 
       .hero {
-        padding: 64px 0 30px;
+        padding: 18px 0;
         border-bottom: 1px solid var(--line);
       }
 
       .profile {
         display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 20px;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 18px;
         align-items: center;
       }
 
+      .identity {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        gap: 12px;
+        align-items: center;
+        min-width: 0;
+      }
+
       .avatar {
-        width: 88px;
-        height: 88px;
+        width: 48px;
+        height: 48px;
         border: 1px solid var(--line);
         border-radius: 50%;
       }
 
       h1 {
         margin: 0;
-        font-size: clamp(2rem, 5vw, 4.5rem);
-        line-height: 1;
-        font-weight: 850;
+        font-size: 1.05rem;
+        line-height: 1.2;
+        font-weight: 800;
         letter-spacing: 0;
       }
 
       .handle {
-        margin: 10px 0 0;
+        margin: 2px 0 0;
         color: var(--accent);
         font-weight: 700;
+        font-size: 0.9rem;
       }
 
       .bio {
-        max-width: 720px;
-        margin: 16px 0 0;
+        max-width: 620px;
+        margin: 4px 0 0;
         color: var(--muted);
-        font-size: 1.05rem;
+        font-size: 0.88rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
 
       .stats {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-        margin: 32px 0 0;
+        gap: 8px;
+        min-width: 360px;
       }
 
       .stat {
-        min-height: 92px;
-        padding: 16px;
+        min-height: 54px;
+        padding: 9px 12px;
         background: var(--panel);
         border: 1px solid var(--line);
         border-radius: 4px;
@@ -93,15 +105,17 @@ export function renderStyles(): string {
 
       .stat strong {
         display: block;
-        font-size: 1.65rem;
+        font-size: 1.05rem;
         line-height: 1.1;
       }
 
       .stat span {
         display: block;
-        margin-top: 8px;
+        margin-top: 4px;
         color: var(--muted);
-        font-size: 0.9rem;
+        font-size: 0.74rem;
+        font-weight: 700;
+        text-transform: uppercase;
       }
 
       .toolbar {
@@ -203,7 +217,7 @@ export function renderStyles(): string {
       }
 
       .repo-header p {
-        max-width: 760px;
+        max-width: 1080px;
         margin: 10px 0 0;
         color: var(--muted);
       }
@@ -234,8 +248,14 @@ export function renderStyles(): string {
         margin-top: 18px;
       }
 
+      @media (min-width: 1280px) {
+        .contribution-list {
+          gap: 14px;
+        }
+      }
+
       .contribution {
-        padding: 16px;
+        padding: 18px;
         border: 1px solid var(--line);
         border-radius: 4px;
         background: var(--panel-soft);
@@ -291,11 +311,58 @@ export function renderStyles(): string {
         display: block;
         max-width: 100%;
         height: auto;
-        max-height: 420px;
+        max-height: 620px;
         object-fit: contain;
         border: 1px solid var(--line);
         border-radius: 4px;
         background: #ffffff;
+      }
+
+      .markdown-table-wrap {
+        max-width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 4px;
+        background: #ffffff;
+      }
+
+      .markdown-table {
+        width: 100%;
+        min-width: 860px;
+        border-collapse: collapse;
+        color: var(--text);
+        font-size: 0.88rem;
+      }
+
+      .markdown-table th,
+      .markdown-table td {
+        padding: 12px;
+        border-right: 1px solid var(--line);
+        border-bottom: 1px solid var(--line);
+        vertical-align: top;
+        text-align: left;
+      }
+
+      .markdown-table th:last-child,
+      .markdown-table td:last-child {
+        border-right: 0;
+      }
+
+      .markdown-table tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .markdown-table th {
+        background: #f3f3f3;
+        color: var(--text);
+        font-size: 0.78rem;
+        font-weight: 800;
+        text-transform: uppercase;
+      }
+
+      .markdown-table img {
+        width: 100%;
+        max-height: 440px;
       }
 
       .description-fallback {
@@ -388,7 +455,7 @@ export function renderStyles(): string {
 
       @media (max-width: 760px) {
         .hero {
-          padding-top: 36px;
+          padding: 14px 0;
         }
 
         .profile,
@@ -399,6 +466,11 @@ export function renderStyles(): string {
 
         .stats {
           grid-template-columns: repeat(2, minmax(0, 1fr));
+          min-width: 0;
+        }
+
+        .bio {
+          white-space: normal;
         }
 
         .repo-stats {
@@ -408,6 +480,10 @@ export function renderStyles(): string {
 
       @media (max-width: 460px) {
         .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .identity {
           grid-template-columns: 1fr;
         }
 

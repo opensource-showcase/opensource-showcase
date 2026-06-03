@@ -16,17 +16,19 @@ export function renderHero(contributor: Contributor, stats: SiteStats): string {
   return `<header class="hero">
       <div class="shell">
         <div class="profile">
-          <img class="avatar" src="https://github.com/${escapeHtml(contributor.username)}.png" alt="${escapeHtml(displayName)}" />
-          <div>
-            <h1>${escapeHtml(displayName)}</h1>
-            <p class="handle"><a href="${escapeHtml(contributor.profile_url)}">@${escapeHtml(contributor.username)}</a></p>
-            ${contributor.bio ? `<p class="bio">${escapeHtml(contributor.bio)}</p>` : ''}
+          <div class="identity">
+            <img class="avatar" src="https://github.com/${escapeHtml(contributor.username)}.png" alt="${escapeHtml(displayName)}" />
+            <div class="identity-copy">
+              <h1>${escapeHtml(displayName)}</h1>
+              <p class="handle"><a href="${escapeHtml(contributor.profile_url)}">@${escapeHtml(contributor.username)}</a></p>
+              ${contributor.bio ? `<p class="bio">${escapeHtml(contributor.bio)}</p>` : ''}
+            </div>
           </div>
-        </div>
-        <div class="stats" aria-label="Contribution summary">
-          <div class="stat"><strong>${stats.totalContributions.toLocaleString()}</strong><span>contributions</span></div>
-          <div class="stat"><strong>${stats.totalProjects.toLocaleString()}</strong><span>projects</span></div>
-          <div class="stat"><strong>${stats.totalLanguages.toLocaleString()}</strong><span>languages</span></div>
+          <div class="stats" aria-label="Contribution summary">
+            <div class="stat"><strong>${stats.totalContributions.toLocaleString()}</strong><span>contributions</span></div>
+            <div class="stat"><strong>${stats.totalProjects.toLocaleString()}</strong><span>projects</span></div>
+            <div class="stat"><strong>${stats.totalLanguages.toLocaleString()}</strong><span>languages</span></div>
+          </div>
         </div>
       </div>
     </header>`;
