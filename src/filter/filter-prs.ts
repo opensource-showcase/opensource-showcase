@@ -148,9 +148,7 @@ export function getFilterStats(contributions: ContributionWithFilter[]): {
  * Sort contributions by importance
  * Priority: repo stars desc, then merge date desc
  */
-export function sortContributions(
-  contributions: EnrichedContribution[]
-): EnrichedContribution[] {
+export function sortContributions(contributions: EnrichedContribution[]): EnrichedContribution[] {
   return [...contributions].sort((a, b) => {
     // First sort by stars (desc)
     if (b.repo_stars !== a.repo_stars) {

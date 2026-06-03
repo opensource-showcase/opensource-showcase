@@ -151,9 +151,7 @@ export function setCacheEntry<T>(key: string, value: T, ttlMs?: number): void {
  * Check if cache entry is valid (not expired)
  */
 export function isCacheValid(key: string): boolean {
-  const entry = store.get(`cache.${key}`) as
-    | { timestamp: number; ttl?: number }
-    | undefined;
+  const entry = store.get(`cache.${key}`) as { timestamp: number; ttl?: number } | undefined;
 
   if (!entry) {
     return false;

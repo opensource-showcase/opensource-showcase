@@ -66,12 +66,22 @@ export async function fetchMergedPRs(
 
       allPRs.push(...prs);
 
-      onProgress?.(allPRs.length, Math.min(data.total_count, MAX_RESULTS), `Fetched ${allPRs.length} PRs`);
+      onProgress?.(
+        allPRs.length,
+        Math.min(data.total_count, MAX_RESULTS),
+        `Fetched ${allPRs.length} PRs`
+      );
 
       // Check if we've fetched all results or hit the limit
-      if (allPRs.length >= MAX_RESULTS || allPRs.length >= data.total_count || data.items.length < perPage) {
+      if (
+        allPRs.length >= MAX_RESULTS ||
+        allPRs.length >= data.total_count ||
+        data.items.length < perPage
+      ) {
         if (data.total_count > MAX_RESULTS) {
-          spinner.warn(`Note: GitHub Search API limits results to 1000. You have ${data.total_count} total PRs.`);
+          spinner.warn(
+            `Note: GitHub Search API limits results to 1000. You have ${data.total_count} total PRs.`
+          );
           spinner.info('Tip: Use --since=YYYY-MM-DD to fetch more recent PRs');
         }
         break;
@@ -88,10 +98,7 @@ export async function fetchMergedPRs(
     const err = error as { status?: number; message?: string };
 
     if (err.status === 403) {
-      throw new RateLimitError(
-        'GitHub API rate limit exceeded',
-        Date.now() + 3600000
-      );
+      throw new RateLimitError('GitHub API rate limit exceeded', Date.now() + 3600000);
     }
 
     throw new NetworkError(
@@ -145,11 +152,13 @@ export async function fetchPRDetails(
   owner: string,
   repo: string,
   prNumber: number
-): Promise<Pick<PullRequest, 'additions' | 'deletions' | 'changed_files' | 'labels'> & { 
-  body: string | null; 
-  reviewers: Array<{ login: string; avatar_url: string }>;
-  merged_by: string | null;
-}> {
+): Promise<
+  Pick<PullRequest, 'additions' | 'deletions' | 'changed_files' | 'labels'> & {
+    body: string | null;
+    reviewers: Array<{ login: string; avatar_url: string }>;
+    merged_by: string | null;
+  }
+> {
   try {
     const { data } = await octokit.rest.pulls.get({
       owner,
@@ -168,16 +177,16 @@ export async function fetchPRDetails(
 
       // Get unique reviewers who approved
       const approvedReviewers = reviews
-        .filter(review => review.state === 'APPROVED')
-        .map(review => ({
+        .filter((review) => review.state === 'APPROVED')
+        .map((review) => ({
           login: review.user?.login || '',
           avatar_url: review.user?.avatar_url || '',
         }))
-        .filter(r => r.login); // Remove empty logins
+        .filter((r) => r.login); // Remove empty logins
 
       // Deduplicate by login
       const uniqueReviewers = Array.from(
-        new Map(approvedReviewers.map(r => [r.login, r])).values()
+        new Map(approvedReviewers.map((r) => [r.login, r])).values()
       );
 
       reviewers.push(...uniqueReviewers);
@@ -193,7 +202,7 @@ export async function fetchPRDetails(
       reviewers,
       merged_by: data.merged_by?.login || null,
       labels: (data.labels ?? []).map((label) => ({
-        name: typeof label === 'string' ? label : label.name ?? '',
+        name: typeof label === 'string' ? label : (label.name ?? ''),
       })),
     };
   } catch {
@@ -284,11 +293,13 @@ export async function enrichPRsWithMetadata(
     }
 
     if (skipped > 0) {
-      spinner.succeed(`Enriched ${enriched.length} Pull Requests (skipped ${skipped} from low-star repos)`);
+      spinner.succeed(
+        `Enriched ${enriched.length} Pull Requests (skipped ${skipped} from low-star repos)`
+      );
     } else {
       spinner.succeed(`Enriched ${enriched.length} Pull Requests`);
     }
-    
+
     return enriched;
   } catch (error) {
     spinner.fail('Failed to enrich PRs');

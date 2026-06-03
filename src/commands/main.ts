@@ -10,18 +10,9 @@ import {
   isAuthenticated,
   waitForRateLimit,
 } from '../auth/github-auth.js';
-import {
-  fetchPRDetails,
-} from '../github/fetch-prs.js';
-import {
-  selectContributions,
-  confirmSave,
-  showSummary,
-} from '../ui/interactive.js';
-import {
-  getExistingContributions,
-  saveContributions,
-} from '../repo/manage-repo.js';
+import { fetchPRDetails } from '../github/fetch-prs.js';
+import { selectContributions, confirmSave, showSummary } from '../ui/interactive.js';
+import { getExistingContributions, saveContributions } from '../repo/manage-repo.js';
 import type { CLIOptions, EnrichedContribution } from '../types/index.js';
 
 export async function mainFlow(options: CLIOptions): Promise<void> {
@@ -32,7 +23,7 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
   logger.subtitle('Step 1: Authentication');
 
   let authContext;
-  
+
   if (isAuthenticated()) {
     // Use stored credentials
     logger.info('Using stored credentials...');
@@ -104,9 +95,9 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
     try {
       // Use Search API to find PRs in this specific repo (much faster!)
       const query = `is:pr is:merged author:${username} repo:${repoFullName}`;
-      
+
       await waitForRateLimit(octokit, 10);
-      
+
       const { data } = await octokit.rest.search.issuesAndPullRequests({
         q: query,
         per_page: 100,
@@ -131,15 +122,15 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
       for (let i = 0; i < userPRs.length; i++) {
         const pr = userPRs[i];
         if (!pr) continue;
-        
+
         await waitForRateLimit(octokit, 5);
-        
+
         // Extract PR number from URL
         const prMatch = pr.html_url.match(/\/pull\/(\d+)$/);
         const prNumber = prMatch ? parseInt(prMatch[1] || '0', 10) : 0;
-        
+
         if (!prNumber) continue;
-        
+
         const prDetails = await fetchPRDetails(octokit, owner, repoName, prNumber);
 
         allPRs.push({
@@ -186,9 +177,7 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
   }
 
   if (existing && !options.fresh) {
-    logger.success(
-      `Found ${existing.contributions.length} existing contributions`
-    );
+    logger.success(`Found ${existing.contributions.length} existing contributions`);
   } else if (options.fresh) {
     logger.info('Starting fresh (ignoring existing contributions)');
   } else {
@@ -200,7 +189,7 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
   logger.subtitle('Step 7: Select Specific PRs to Showcase');
 
   const selected = await selectContributions(
-    allPRs.map(c => ({ ...c, filtered: false })),
+    allPRs.map((c) => ({ ...c, filtered: false })),
     existing?.contributions ?? []
   );
 

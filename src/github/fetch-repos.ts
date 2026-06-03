@@ -76,7 +76,7 @@ export async function fetchContributedRepositories(
     const batchSize = 5;
     for (let i = 0; i < repos.length; i += batchSize) {
       const batch = repos.slice(i, i + batchSize);
-      
+
       await Promise.all(
         batch.map(async (repo) => {
           try {
@@ -107,10 +107,7 @@ export async function fetchContributedRepositories(
     const err = error as { status?: number; message?: string };
 
     if (err.status === 403) {
-      throw new RateLimitError(
-        'GitHub API rate limit exceeded',
-        Date.now() + 3600000
-      );
+      throw new RateLimitError('GitHub API rate limit exceeded', Date.now() + 3600000);
     }
 
     throw new NetworkError(

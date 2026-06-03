@@ -4,6 +4,14 @@ test/
 *.test.ts
 *.spec.ts
 
+# Images and assets
+images/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+
 # Environment
 .env
 .env.*

@@ -7,12 +7,7 @@
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { logger } from './utils/logger.js';
-import {
-  getErrorMessage,
-  isCustomError,
-  RateLimitError,
-  ValidationError,
-} from './utils/errors.js';
+import { getErrorMessage, isCustomError, RateLimitError, ValidationError } from './utils/errors.js';
 import { mainFlow } from './commands/main.js';
 import { loginCommand } from './commands/login.js';
 import { statusCommand } from './commands/status.js';
@@ -153,9 +148,7 @@ function handleError(error: unknown): void {
 
   logger.newline();
   logger.plain(chalk.gray('Need help? Run with --debug flag for more information'));
-  logger.plain(
-    chalk.gray('Report issues: https://github.com/opensource-showcase/cli/issues')
-  );
+  logger.plain(chalk.gray('Report issues: https://github.com/opensource-showcase/cli/issues'));
   logger.newline();
 
   process.exit(1);

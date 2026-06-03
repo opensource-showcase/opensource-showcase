@@ -1,13 +1,6 @@
-import type {
-  Contributor,
-  EnrichedContribution,
-} from '../../types/index.js';
+import type { Contributor, EnrichedContribution } from '../../types/index.js';
 import type { SiteStats } from './utils.js';
-import {
-  escapeHtml,
-  formatDate,
-  renderRichDescription,
-} from './utils.js';
+import { escapeHtml, formatDate, renderRichDescription } from './utils.js';
 
 export function renderHero(contributor: Contributor, _stats: SiteStats): string {
   const displayName = contributor.name || contributor.username;
@@ -29,9 +22,7 @@ export function renderHero(contributor: Contributor, _stats: SiteStats): string 
     </nav>`;
 }
 
-export function renderMainContent(
-  grouped: Array<[string, EnrichedContribution[]]>
-): string {
+export function renderMainContent(grouped: Array<[string, EnrichedContribution[]]>): string {
   return `<main class="shell">
       <div id="results">
         ${grouped.map(([repo, contributions]) => renderRepositorySection(repo, contributions)).join('')}
@@ -51,9 +42,7 @@ export function renderRepositorySection(
     (a, b) => new Date(b.merged_at).getTime() - new Date(a.merged_at).getTime()
   );
   const [owner] = repo.split('/');
-  const languages = new Set(
-    sorted.map((contribution) => contribution.language ?? 'Unknown')
-  );
+  const languages = new Set(sorted.map((contribution) => contribution.language ?? 'Unknown'));
 
   return `<section class="repo-section" data-repo="${escapeHtml(repo)}" data-languages="${escapeHtml([...languages].join('|'))}">
             <header class="repo-header">
@@ -80,7 +69,7 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
   const labels = contribution.labels.slice(0, 5);
   const language = contribution.language ?? 'Unknown';
   const reviewers = contribution.reviewers?.slice(0, 5) ?? [];
-  
+
   // Simplified reviewer display
   const reviewHtml =
     reviewers.length > 0
@@ -110,10 +99,14 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
   return `<article class="contribution" data-title="${escapeHtml(contribution.pr_title)}" data-language="${escapeHtml(language)}">
                 <a class="pr-title" href="${escapeHtml(contribution.pr_url)}">${escapeHtml(contribution.pr_title)}</a>
                 
-                ${description ? `<details class="description-details">
+                ${
+                  description
+                    ? `<details class="description-details">
                   <summary>📝 <strong>See description</strong></summary>
                   <div class="description">${description}</div>
-                </details>` : ''}
+                </details>`
+                    : ''
+                }
                 
                 ${reviewHtml}
                 ${noteHtml}

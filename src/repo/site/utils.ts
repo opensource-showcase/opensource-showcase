@@ -16,10 +16,7 @@ export function escapeHtml(value: string | number | null | undefined): string {
     .replace(/'/g, '&#39;');
 }
 
-export function cleanDescription(
-  value: string | null | undefined,
-  maxLength = 220
-): string {
+export function cleanDescription(value: string | null | undefined, maxLength = 220): string {
   if (!value) return '';
 
   const cleaned = value
@@ -31,9 +28,7 @@ export function cleanDescription(
     .replace(/\s+/g, ' ')
     .trim();
 
-  return cleaned.length > maxLength
-    ? `${cleaned.slice(0, maxLength).trim()}...`
-    : cleaned;
+  return cleaned.length > maxLength ? `${cleaned.slice(0, maxLength).trim()}...` : cleaned;
 }
 
 function escapeAttribute(value: string): string {
@@ -50,10 +45,7 @@ function renderInlineMarkdown(value: string): string {
     const alt = attrs.match(/alt=&quot;([^&]*)&quot;/)?.[1] ?? '';
     const width = attrs.match(/width=&quot;(\d+)&quot;/)?.[1];
     const height = attrs.match(/height=&quot;(\d+)&quot;/)?.[1];
-    const dimensions = [
-      width ? `width="${width}"` : '',
-      height ? `height="${height}"` : '',
-    ]
+    const dimensions = [width ? `width="${width}"` : '', height ? `height="${height}"` : '']
       .filter(Boolean)
       .join(' ');
 
@@ -63,10 +55,7 @@ function renderInlineMarkdown(value: string): string {
     /!\[([^\]]*)\]\((https?:\/\/[^)\s]+)\)/g,
     '<img src="$2" alt="$1" loading="lazy" />'
   );
-  rendered = rendered.replace(
-    /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
-    '<a href="$2">$1</a>'
-  );
+  rendered = rendered.replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2">$1</a>');
   rendered = rendered.replace(/`([^`]+)`/g, '<code>$1</code>');
   rendered = rendered.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 
@@ -93,7 +82,10 @@ function isMarkdownTable(block: string): boolean {
 }
 
 function renderMarkdownTable(block: string): string {
-  const lines = block.split('\n').map((line) => line.trim()).filter(Boolean);
+  const lines = block
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean);
   const headers = splitMarkdownTableRow(lines[0] ?? '');
   const rows = lines.slice(2).map(splitMarkdownTableRow);
 
@@ -104,18 +96,13 @@ function renderMarkdownTable(block: string): string {
         <tbody>${rows
           .map(
             (row) =>
-              `<tr>${row
-                .map((cell) => `<td>${renderInlineMarkdown(cell)}</td>`)
-                .join('')}</tr>`
+              `<tr>${row.map((cell) => `<td>${renderInlineMarkdown(cell)}</td>`).join('')}</tr>`
           )
           .join('')}</tbody>
       </table></div>`;
 }
 
-export function renderRichDescription(
-  value: string | null | undefined,
-  maxLength = 12000
-): string {
+export function renderRichDescription(value: string | null | undefined, maxLength = 12000): string {
   if (!value) return '';
 
   const withoutComments = value
@@ -139,9 +126,7 @@ export function renderRichDescription(
       if (remainingLength <= 0) return '';
 
       const blockToRender =
-        block.length > remainingLength
-          ? `${block.slice(0, remainingLength).trim()}\n\n...`
-          : block;
+        block.length > remainingLength ? `${block.slice(0, remainingLength).trim()}\n\n...` : block;
       remainingLength -= block.length;
 
       const heading = blockToRender.match(/^#{1,3}\s+(.+)$/);
@@ -186,10 +171,7 @@ export function calculateStats(contributions: EnrichedContribution[]): SiteStats
     repos.add(contribution.repo);
 
     if (contribution.language) {
-      languages.set(
-        contribution.language,
-        (languages.get(contribution.language) ?? 0) + 1
-      );
+      languages.set(contribution.language, (languages.get(contribution.language) ?? 0) + 1);
     }
   });
 

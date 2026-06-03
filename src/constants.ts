@@ -16,13 +16,7 @@ export const GITHUB_SCOPES = ['public_repo', 'read:user'] as const;
 
 export const DEFAULT_CONFIG: UserConfig = {
   minStars: 100, // Only show repos with 100+ stars by default
-  excludeTitlePatterns: [
-    'fix typo',
-    'typo:',
-    'update dependencies',
-    'bump version',
-    'bump deps',
-  ],
+  excludeTitlePatterns: ['fix typo', 'typo:', 'update dependencies', 'bump version', 'bump deps'],
   excludeBotPRs: true,
   excludeOwnRepos: true, // Exclude own repos by default
 };

@@ -9,12 +9,7 @@ import ora from 'ora';
 import { GITHUB_SCOPES } from '../constants.js';
 import { logger } from '../utils/logger.js';
 import { AuthenticationError } from '../utils/errors.js';
-import {
-  storeToken,
-  storeUsername,
-  storeUser,
-  getStoredToken,
-} from '../utils/config.js';
+import { storeToken, storeUsername, storeUser, getStoredToken } from '../utils/config.js';
 import type { AuthContext } from '../types/index.js';
 
 const PLACEHOLDER_CLIENT_ID: string = 'YOUR_PUBLIC_CLIENT_ID_HERE';
@@ -81,9 +76,7 @@ export async function authenticateWithGitHub(): Promise<AuthContext> {
     return { octokit, username: user.login, user };
   } catch (error) {
     spinner.fail('Authentication failed');
-    throw new AuthenticationError(
-      `Failed to authenticate: ${(error as Error).message}`
-    );
+    throw new AuthenticationError(`Failed to authenticate: ${(error as Error).message}`);
   }
 }
 
@@ -148,10 +141,7 @@ export async function checkRateLimit(octokit: Octokit): Promise<{
 /**
  * Wait for rate limit reset if needed
  */
-export async function waitForRateLimit(
-  octokit: Octokit,
-  minRemaining = 10
-): Promise<void> {
+export async function waitForRateLimit(octokit: Octokit, minRemaining = 10): Promise<void> {
   const rateLimit = await checkRateLimit(octokit);
 
   if (rateLimit.remaining < minRemaining) {

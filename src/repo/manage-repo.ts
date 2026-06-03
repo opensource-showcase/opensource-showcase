@@ -53,10 +53,7 @@ async function getFileSha(
   }
 }
 
-async function enableGitHubPages(
-  octokit: Octokit,
-  username: string
-): Promise<GitHubPagesResult> {
+async function enableGitHubPages(octokit: Octokit, username: string): Promise<GitHubPagesResult> {
   const source = {
     branch: 'main',
     path: '/',
@@ -104,10 +101,7 @@ async function enableGitHubPages(
 /**
  * Check if .opensource repository exists
  */
-export async function repositoryExists(
-  octokit: Octokit,
-  owner: string
-): Promise<boolean> {
+export async function repositoryExists(octokit: Octokit, owner: string): Promise<boolean> {
   try {
     await octokit.rest.repos.get({
       owner,
@@ -126,10 +120,7 @@ export async function repositoryExists(
 /**
  * Create .opensource repository
  */
-export async function createRepository(
-  octokit: Octokit,
-  _username: string
-): Promise<void> {
+export async function createRepository(octokit: Octokit, _username: string): Promise<void> {
   const spinner = ora('Creating .opensource repository...').start();
 
   try {
@@ -149,9 +140,7 @@ export async function createRepository(
       throw new RepositoryError('Repository already exists');
     }
 
-    throw new RepositoryError(
-      `Failed to create repository: ${err.message ?? 'Unknown error'}`
-    );
+    throw new RepositoryError(`Failed to create repository: ${err.message ?? 'Unknown error'}`);
   }
 }
 
@@ -294,7 +283,7 @@ export async function saveContributions(
     // Create/update README
     spinner.text = 'Generating README.md...';
     const readmeContent = generateReadme(contributionsData, {
-      excludeOwnRepos: true,     // Filter out own repos for cleaner portfolio
+      excludeOwnRepos: true, // Filter out own repos for cleaner portfolio
       // No limit - show all projects
     });
 
@@ -338,9 +327,7 @@ export async function saveContributions(
     };
   } catch (error) {
     spinner.fail('Failed to save contributions');
-    throw new RepositoryError(
-      `Failed to save contributions: ${(error as Error).message}`
-    );
+    throw new RepositoryError(`Failed to save contributions: ${(error as Error).message}`);
   }
 }
 
@@ -367,10 +354,7 @@ export function validateContributionsSchema(data: unknown): data is Contribution
   }
 
   if (!Array.isArray(obj.contributions)) {
-    throw new ValidationError(
-      'Missing or invalid contributions field',
-      'contributions'
-    );
+    throw new ValidationError('Missing or invalid contributions field', 'contributions');
   }
 
   return true;

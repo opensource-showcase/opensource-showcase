@@ -40,7 +40,7 @@ export function generateProjectSection(
   </p>
 </blockquote>
 
-${sorted.map(pr => generatePRCard(pr)).join('\n')}
+${sorted.map((pr) => generatePRCard(pr)).join('\n')}
 
 </details>
 
@@ -72,19 +72,24 @@ function generatePRCard(pr: EnrichedContribution): string {
   }
 
   // Description with collapsible details
-  const descriptionHtml = cleanedDescription ? `
+  const descriptionHtml = cleanedDescription
+    ? `
 <details>
 <summary><strong>📝 See description</strong></summary>
 <blockquote>
 <p>${cleanedDescription}</p>
 </blockquote>
-</details>` : '';
+</details>`
+    : '';
 
   // Reviewers section - more compact
   let reviewersHtml = '';
   if (pr.reviewers && pr.reviewers.length > 0) {
     const reviewerBadges = pr.reviewers
-      .map(r => `<a href="https://github.com/${r.login}"><img src="${r.avatar_url}" width="20" height="20" style="border-radius: 50%; vertical-align: middle;" alt="${r.login}" title="${r.login}"/></a>`)
+      .map(
+        (r) =>
+          `<a href="https://github.com/${r.login}"><img src="${r.avatar_url}" width="20" height="20" style="border-radius: 50%; vertical-align: middle;" alt="${r.login}" title="${r.login}"/></a>`
+      )
       .join(' ');
     reviewersHtml = `<sub>✅ Reviewed by: ${reviewerBadges}</sub>`;
   } else if (pr.merged_by) {
@@ -92,15 +97,24 @@ function generatePRCard(pr: EnrichedContribution): string {
   }
 
   // Personal note
-  const noteHtml = pr.note ? `
+  const noteHtml = pr.note
+    ? `
 <blockquote>
   <p>💡 <strong>My Impact:</strong> ${pr.note}</p>
-</blockquote>` : '';
+</blockquote>`
+    : '';
 
   // Labels - more compact
-  const labelsHtml = pr.labels && pr.labels.length > 0
-    ? pr.labels.slice(0, 5).map(l => `<img src="https://img.shields.io/badge/${encodeURIComponent(l.replace(/-/g, '--'))}-gray?style=flat-square" alt="${l}"/>`).join(' ')
-    : '';
+  const labelsHtml =
+    pr.labels && pr.labels.length > 0
+      ? pr.labels
+          .slice(0, 5)
+          .map(
+            (l) =>
+              `<img src="https://img.shields.io/badge/${encodeURIComponent(l.replace(/-/g, '--'))}-gray?style=flat-square" alt="${l}"/>`
+          )
+          .join(' ')
+      : '';
 
   return `
 <div style="padding: 12px 16px; border-left: 3px solid #0969da; margin: 10px 0; background: #f6f8fa; border-radius: 6px;">

@@ -68,9 +68,7 @@ export async function statusCommand(): Promise<void> {
     logger.newline();
     logger.subtitle('Top Languages');
 
-    const sortedLangs = [...languages.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
+    const sortedLangs = [...languages.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
 
     sortedLangs.forEach(([lang, count]) => {
       logger.listItem(`${lang}: ${count} contributions`);
@@ -82,9 +80,7 @@ export async function statusCommand(): Promise<void> {
     logger.newline();
     logger.subtitle('Top Repositories');
 
-    const sortedRepos = [...repos.entries()]
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 5);
+    const sortedRepos = [...repos.entries()].sort((a, b) => b[1] - a[1]).slice(0, 5);
 
     sortedRepos.forEach(([repo, count]) => {
       const contribution = existing.contributions.find((c) => c.repo === repo);

@@ -4,11 +4,14 @@
 
 import type { Contributor } from '../types/index.js';
 
-export function generateHeader(contributor: Contributor, stats: {
-  totalContributions: number;
-  totalProjects: number;
-  totalLanguages: number;
-}): string {
+export function generateHeader(
+  contributor: Contributor,
+  stats: {
+    totalContributions: number;
+    totalProjects: number;
+    totalLanguages: number;
+  }
+): string {
   const { username, name, profile_url } = contributor;
   const displayName = name || username;
   const avatarUrl = `https://github.com/${username}.png`;
@@ -121,4 +124,3 @@ export function generateHeader(contributor: Contributor, stats: {
 ---
 `;
 }
-

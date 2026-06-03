@@ -1,157 +1,234 @@
 # opensource-showcase
 
-> 📦 CLI tool to curate and showcase your open source contributions
+<p align="center">
+  <img src="https://raw.githubusercontent.com/opensource-showcase/opensource-showcase/main/images/logo-banner.png" alt="opensource-showcase" width="600">
+</p>
 
-## Features
+<p align="center">
+  A command-line tool for curating and showcasing open source contributions.
+</p>
 
-- ✅ GitHub browser login via OAuth Device Flow
-- ✅ Fetch all your merged Pull Requests
-- ✅ Smart filtering (low stars, trivial PRs, bots)
-- ✅ Interactive selection UI
-- ✅ Auto-creates public `.opensource` repository for sharing
-- ✅ Enables GitHub Pages for the generated portfolio when GitHub allows it
-- ✅ Generates beautiful README with organization logos and PR descriptions
-- ✅ Generates a professional `index.html` portfolio page for GitHub Pages
+<p align="center">
+  <a href="https://www.npmjs.com/package/opensource-showcase"><img src="https://img.shields.io/npm/v/opensource-showcase.svg" alt="npm version"></a>
+  <a href="https://github.com/opensource-showcase/opensource-showcase/blob/main/LICENSE"><img src="https://img.shields.io/npm/l/opensource-showcase.svg" alt="license"></a>
+  <a href="https://www.npmjs.com/package/opensource-showcase"><img src="https://img.shields.io/npm/dm/opensource-showcase.svg" alt="downloads"></a>
+</p>
+
+## Overview
+
+opensource-showcase helps developers document their open source work by automatically fetching merged pull requests from GitHub, applying intelligent filters, and generating a professional portfolio. The tool creates a dedicated repository with both human-readable and machine-readable formats of your contribution history.
 
 ## Installation
 
-```bash
-# Run without installing
-npx opensource-showcase
+Run directly without installation:
 
-# Or install globally
+```bash
+npx opensource-showcase
+```
+
+Or install globally:
+
+```bash
 npm install -g opensource-showcase
 ```
 
-## Quick Setup (30 seconds)
+## Quick Start
 
-1. **Run the CLI:**
+1. Run the CLI:
+
    ```bash
    opensource-showcase
    ```
 
-2. **Approve in GitHub:**
-   - The CLI opens GitHub in your browser
-   - Enter the one-time code shown in the terminal
-   - After approval, your GitHub login is saved locally for future runs
+2. Authenticate with GitHub when prompted. The CLI will open your browser for OAuth authentication.
 
-No manual credential setup is needed.
+3. Select repositories and pull requests to showcase.
 
-### Commands
+4. The tool creates a `.opensource` repository in your GitHub account with:
+   - `contributions.json` - Machine-readable contribution data
+   - `index.html` - Interactive portfolio page
+   - `README.md` - Formatted contribution list
+
+## Features
+
+### Automatic Data Collection
+
+- Fetches all merged pull requests from your GitHub account
+- Enriches PRs with repository metadata, descriptions, and reviewer information
+- Handles GitHub API pagination and rate limiting
+
+### Intelligent Filtering
+
+- Filters by repository star count
+- Excludes trivial changes (typo fixes, dependency updates)
+- Removes bot-generated PRs
+- Configurable exclusion patterns
+
+### Interactive Selection
+
+- Two-step workflow: select repositories, then select specific PRs
+- Visual interface for reviewing contributions
+- Ability to add personal notes and impact descriptions
+
+### Professional Output
+
+- GitHub Pages-ready HTML portfolio with search and filtering
+- Markdown README with organization logos and detailed PR information
+- JSON export following the .opensource specification
+
+## Commands
 
 ```bash
-opensource-showcase                    # Curate contributions (interactive)
-opensource-showcase login              # Login to GitHub in your browser
-opensource-showcase whoami             # Show the authenticated account
-opensource-showcase status             # View current contributions  
-opensource-showcase config             # View/edit configuration
-opensource-showcase logout             # Clear saved GitHub login
-opensource-showcase --all              # Show all PRs (no filtering)
-opensource-showcase --min-stars=100    # Custom star filter
+opensource-showcase              # Interactive mode
+opensource-showcase login        # Authenticate with GitHub
+opensource-showcase whoami       # Show authenticated user
+opensource-showcase status       # Display current contributions
+opensource-showcase config       # View or edit configuration
+opensource-showcase logout       # Clear authentication
+opensource-showcase --all        # Bypass filtering
+opensource-showcase --fresh      # Start from scratch, ignore existing data
 ```
 
-## Repository Visibility
+### Command Options
 
-The generated showcase repository should be **public** if you want people to view it or host it with GitHub Pages. This CLI creates the repository as public by default.
-
-Keep only the CLI source repository private if you are not ready to publish the tool itself yet. The user's generated showcase page should be public because it is a portfolio.
+- `--min-stars=<number>` - Set minimum repository stars (default: 100)
+- `--all` - Include all PRs without filtering
+- `--fresh` - Ignore existing contributions and start fresh
 
 ## Configuration
 
-Create `~/.opensourcerc`:
+Create a configuration file at `~/.opensourcerc`:
 
 ```json
 {
-  "minStars": 5,
-  "excludeTitlePatterns": ["fix typo", "chore:", "update deps"],
+  "minStars": 100,
+  "excludeTitlePatterns": ["chore:", "deps:", "fix typo"],
   "excludeBotPRs": true,
   "excludeOwnRepos": true
 }
 ```
 
-## What Gets Generated
+### Configuration Options
 
-The CLI creates a `.opensource` repository with:
+| Option                 | Type     | Default    | Description                   |
+| ---------------------- | -------- | ---------- | ----------------------------- |
+| `minStars`             | number   | 100        | Minimum repository stars      |
+| `excludeTitlePatterns` | string[] | See source | PR title patterns to exclude  |
+| `excludeBotPRs`        | boolean  | true       | Filter out bot-generated PRs  |
+| `excludeOwnRepos`      | boolean  | true       | Exclude your own repositories |
+
+## Output
+
+The tool generates three files in your `.opensource` repository:
 
 ### contributions.json
-Machine-readable contribution data following the [.opensource spec](../SPEC.md)
+
+Machine-readable JSON following the [.opensource specification](https://github.com/opensource-showcase/opensource-showcase/blob/main/SPEC.md). Contains complete contribution metadata including:
+
+- Repository information (name, stars, description, language)
+- Pull request details (title, URL, merge date, changes)
+- Review and approval information
+- Custom notes and impact descriptions
 
 ### index.html
-A responsive static portfolio page ready for GitHub Pages.
+
+A static HTML portfolio page with:
+
+- Search functionality across all contributions
+- Language-based filtering
+- Responsive design
+- Rich markdown rendering for PR descriptions
+- Reviewer information with avatars
+
+The page is automatically configured for GitHub Pages deployment.
 
 ### README.md
-Beautiful visualization with:
-- Organization logos
-- PR titles and descriptions  
-- Stars, languages, merge dates
-- Code changes (+/-)
-- Labels
 
-## GitHub Pages
+A formatted markdown document with:
 
-The CLI writes `index.html` and tries to enable GitHub Pages automatically from the `main` branch root.
+- Contribution statistics
+- Grouped by repository (sorted by stars)
+- Organization logos and repository descriptions
+- PR details with metadata (date, language, code changes)
+- Reviewer information
+- Personal impact notes
 
-By default, your portfolio page will be available at:
+## GitHub Pages Deployment
 
-```text
-https://YOUR_USERNAME.github.io/.opensource/
+The tool attempts to enable GitHub Pages automatically. Your portfolio will be available at:
+
+```
+https://<username>.github.io/.opensource/
 ```
 
-If the repository already has a custom domain configured, the CLI respects it and shows a warning. Remove the custom domain from repository Settings → Pages if you want to use the free `github.io` URL.
+If automatic setup fails, enable it manually:
 
-If GitHub Pages cannot be enabled automatically, enable it manually:
+1. Navigate to `https://github.com/<username>/.opensource/settings/pages`
+2. Set source to "Deploy from a branch"
+3. Select the `main` branch and `/` (root) folder
+4. Click Save
 
-1. Open `https://github.com/YOUR_USERNAME/.opensource/settings/pages`
-2. Set source to `Deploy from a branch`
-3. Select the `main` branch and root folder
-4. Save
+## Authentication
 
-### Example Output
+The tool uses GitHub OAuth for authentication. On first run:
 
-```markdown
-# 📦 Open Source Contributions
+1. The CLI generates a device code
+2. Opens GitHub in your browser
+3. You enter the device code to authorize the application
+4. Credentials are stored locally for future use
 
-**Your Name** (@username)
+To refresh authentication:
 
-15 contributions across 8 repositories
-
----
-
-### 1. 🏢 [facebook/react](https://github.com/facebook/react) ⭐ 220,000
-
-**[Fix memory leak in useEffect cleanup](https://github.com/facebook/react/pull/12345)**
-
-Fixed a critical memory leak affecting server-side rendering...
-
-> 💡 **My contribution:** Debugged and patched the cleanup logic
-
-`JavaScript` • 📅 Mar 15, 2024 • [View PR →](#) • 📊 +45 -12 • `bug` `performance`
+```bash
+opensource-showcase logout
+opensource-showcase login
 ```
-
-## Troubleshooting
-
-**Login issues:**
-- Run `opensource-showcase login` to refresh your GitHub session
-- Use `opensource-showcase logout` to clear and start fresh
-
-**No PRs found:**
-- Make sure you have merged PRs to public repositories
-- Check your GitHub username is correct
-- Try running with `--all` to see filtered PRs
 
 ## Project Structure
 
 ```
 src/
-├── auth/           # GitHub OAuth
-├── commands/       # CLI commands
-├── filter/         # Smart filtering
-├── github/         # API integration
-├── repo/           # Repository & README generation
-├── ui/             # Interactive terminal UI
-└── utils/          # Helpers
+├── auth/           # GitHub OAuth implementation
+├── commands/       # CLI command handlers
+├── filter/         # Contribution filtering logic
+├── github/         # GitHub API integration
+├── repo/           # Repository and file generation
+│   ├── site/       # HTML portfolio generation
+│   └── templates/  # README templates
+├── types/          # TypeScript type definitions
+├── ui/             # Interactive terminal interface
+└── utils/          # Shared utilities
 ```
+
+## Troubleshooting
+
+**No pull requests found:**
+
+- Verify you have merged PRs in public repositories
+- Try running with `--all` to see all PRs before filtering
+- Check authentication with `opensource-showcase whoami`
+
+**Authentication issues:**
+
+- Run `opensource-showcase logout` to clear credentials
+- Run `opensource-showcase login` to re-authenticate
+
+**GitHub Pages not working:**
+
+- Verify the repository is public
+- Check Pages settings in repository configuration
+- Allow up to 10 minutes for initial deployment
+
+## Contributing
+
+Contributions are welcome. Please see [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## License
 
-MIT
+MIT License. See [LICENSE](LICENSE) for details.
+
+## Support
+
+- Report issues: https://github.com/opensource-showcase/opensource-showcase/issues
+- Documentation: https://github.com/opensource-showcase/opensource-showcase
+- NPM Package: https://www.npmjs.com/package/opensource-showcase

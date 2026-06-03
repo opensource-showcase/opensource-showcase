@@ -57,9 +57,7 @@ export async function validateCommand(filePath: string): Promise<void> {
 
       // Check repo format
       if (c.repo && !c.repo.includes('/')) {
-        issues.push(
-          `Contribution ${index + 1}: Invalid repo format (should be owner/repo)`
-        );
+        issues.push(`Contribution ${index + 1}: Invalid repo format (should be owner/repo)`);
       }
 
       // Check URL format

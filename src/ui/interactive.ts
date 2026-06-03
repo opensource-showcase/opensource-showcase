@@ -24,8 +24,7 @@ interface ContributionChoice {
  * Format a contribution for display in the checkbox list
  */
 function formatContribution(contribution: ContributionWithFilter): string {
-  const { repo, pr_title, repo_stars, language, filtered, filterReason, merged_at } =
-    contribution;
+  const { repo, pr_title, repo_stars, language, filtered, filterReason, merged_at } = contribution;
 
   const stars = chalk.yellow(`⭐ ${repo_stars.toLocaleString()}`);
   const lang = language ? chalk.blue(`[${language}]`) : '';
@@ -83,15 +82,13 @@ export async function selectRepositories(
 
   logger.title('Select Projects to Include');
   logger.plain(
-    chalk.gray(
-      'First, choose which projects to include. Then you\'ll select specific PRs.'
-    )
+    chalk.gray("First, choose which projects to include. Then you'll select specific PRs.")
   );
   logger.newline();
 
   // Separate own repos from others
-  const ownRepos = repos.filter(r => r.owner.toLowerCase() === username.toLowerCase());
-  const otherRepos = repos.filter(r => r.owner.toLowerCase() !== username.toLowerCase());
+  const ownRepos = repos.filter((r) => r.owner.toLowerCase() === username.toLowerCase());
+  const otherRepos = repos.filter((r) => r.owner.toLowerCase() !== username.toLowerCase());
 
   interface RepoChoice {
     name: string;
@@ -208,17 +205,13 @@ export async function selectContributions(
   ];
 
   if (filteredChoices.length > 0) {
-    allChoices.push(
-      new Separator(chalk.gray('\n─── Filtered PRs (toggle to include) ───\n'))
-    );
+    allChoices.push(new Separator(chalk.gray('\n─── Filtered PRs (toggle to include) ───\n')));
     allChoices.push(...filteredChoices);
   }
 
   logger.title('Select Contributions to Showcase');
   logger.plain(
-    chalk.gray(
-      'Use ↑/↓ to navigate, Space to toggle, Enter to confirm, Ctrl+C to cancel'
-    )
+    chalk.gray('Use ↑/↓ to navigate, Space to toggle, Enter to confirm, Ctrl+C to cancel')
   );
   logger.newline();
 

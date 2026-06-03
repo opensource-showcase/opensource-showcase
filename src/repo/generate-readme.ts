@@ -41,10 +41,12 @@ function calculateStats(contributions: EnrichedContribution[]): {
 /**
  * Group contributions by repository
  */
-function groupByRepository(contributions: EnrichedContribution[]): Map<string, EnrichedContribution[]> {
+function groupByRepository(
+  contributions: EnrichedContribution[]
+): Map<string, EnrichedContribution[]> {
   const grouped = new Map<string, EnrichedContribution[]>();
-  
-  contributions.forEach(contrib => {
+
+  contributions.forEach((contrib) => {
     const existing = grouped.get(contrib.repo);
     if (existing) {
       existing.push(contrib);
@@ -52,7 +54,7 @@ function groupByRepository(contributions: EnrichedContribution[]): Map<string, E
       grouped.set(contrib.repo, [contrib]);
     }
   });
-  
+
   return grouped;
 }
 
@@ -71,7 +73,7 @@ export function generateReadme(
   // Filter out own repos if requested
   let contributions = data.contributions;
   if (excludeOwnRepos) {
-    contributions = contributions.filter(c => {
+    contributions = contributions.filter((c) => {
       const [owner] = c.repo.split('/');
       return owner?.toLowerCase() !== data.contributor.username.toLowerCase();
     });
@@ -89,7 +91,7 @@ export function generateReadme(
   // Featured projects section
   readme += `\n## 🌟 Featured Projects\n\n`;
   readme += `<p align="center">`;
-  
+
   const grouped = groupByRepository(contributions);
   const topRepos = [...grouped.entries()]
     .sort((a, b) => {
@@ -101,7 +103,7 @@ export function generateReadme(
 
   topRepos.forEach(([repo, contribs]) => {
     const stars = (contribs[0]?.repo_stars || 0).toLocaleString();
-    readme += `\n  <a href="#${repo.replace(/\//g, '')}">`; 
+    readme += `\n  <a href="#${repo.replace(/\//g, '')}">`;
     readme += `<img src="https://img.shields.io/badge/${encodeURIComponent(repo)}-${stars}%20⭐-blue?style=for-the-badge&logo=github" alt="${repo}"/>`;
     readme += `</a>`;
   });
