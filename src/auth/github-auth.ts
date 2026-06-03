@@ -17,7 +17,7 @@ import {
 } from '../utils/config.js';
 import type { AuthContext } from '../types/index.js';
 
-const DEFAULT_CLIENT_ID = 'YOUR_PUBLIC_CLIENT_ID_HERE';
+const DEFAULT_CLIENT_ID = 'Ov23li4P4stPDon9vAt1';
 const CLIENT_ID = DEFAULT_CLIENT_ID;
 const CLIENT_TYPE = 'oauth-app';
 
@@ -31,7 +31,7 @@ interface OAuthTokenResponse {
 export async function authenticateWithGitHub(): Promise<AuthContext> {
   if (!isOAuthConfigured()) {
     throw new AuthenticationError(
-      'GitHub OAuth is not configured. Replace YOUR_PUBLIC_CLIENT_ID_HERE in src/auth/github-auth.ts before publishing.'
+      'GitHub OAuth is not configured. Replace Ov23li4P4stPDon9vAt1 in src/auth/github-auth.ts before publishing.'
     );
   }
 

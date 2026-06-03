@@ -15,7 +15,7 @@ Use this when you are ready to publish `opensource-showcase` to npm.
 
 2. Copy the app's public Client ID.
 
-3. Replace `YOUR_PUBLIC_CLIENT_ID_HERE` in:
+3. Replace `Ov23li4P4stPDon9vAt1` in:
    `src/auth/github-auth.ts`
 
    The Client ID is safe to ship in a CLI. Do not add or ship a client secret.
