@@ -9,7 +9,7 @@ export function generateHeader(contributor: Contributor, stats: {
   totalProjects: number;
   totalLanguages: number;
 }): string {
-  const { username, name, profile_url, bio } = contributor;
+  const { username, name, profile_url } = contributor;
   const displayName = name || username;
   const avatarUrl = `https://github.com/${username}.png`;
 
@@ -42,7 +42,6 @@ export function generateHeader(contributor: Contributor, stats: {
         <p style="margin: 5px 0 0 0; color: rgba(255,255,255,0.9); font-size: 18px;">
           <a href="${profile_url}" style="color: white; text-decoration: none;">@${username}</a>
         </p>
-        ${bio ? `<p style="margin: 8px 0 0 0; color: rgba(255,255,255,0.8); font-size: 14px; font-style: italic;">${bio}</p>` : ''}
       </td>
       <td align="right" style="border: none; vertical-align: middle; padding: 0;">
         <table style="border: none;">
@@ -83,7 +82,6 @@ export function generateHeader(contributor: Contributor, stats: {
   <p style="margin: 5px 0;">
     <a href="${profile_url}" style="color: #667eea; text-decoration: none; font-size: 18px;">@${username}</a>
   </p>
-  ${bio ? `<p style="margin: 15px 20px; color: #666; font-style: italic;">${bio}</p>` : ''}
   
   <table align="center" style="margin: 20px 0;">
     <tr>

@@ -58,70 +58,70 @@ function generatePRCard(pr: EnrichedContribution): string {
   const changes = `+${pr.additions || 0} −${pr.deletions || 0}`;
   const files = pr.files_changed ? `${pr.files_changed} files` : '';
 
-  // Clean and truncate description
-  let description = '';
+  // Clean description properly
+  let cleanedDescription = '';
   if (pr.pr_body) {
-    const cleaned = pr.pr_body
-      .replace(/<!--[\s\S]*?-->/g, '')
-      .replace(/```[\s\S]*?```/g, '')
-      .replace(/#{1,6}\s+/g, '')
-      .replace(/\*\*([^*]+)\*\*/g, '$1')
-      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1')
-      .replace(/\n+/g, ' ')
-      .replace(/\s+/g, ' ')
+    cleanedDescription = pr.pr_body
+      .replace(/<!--[\s\S]*?-->/g, '') // Remove HTML comments
+      .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+      .replace(/#{1,6}\s+/g, '') // Remove markdown headers
+      .replace(/\*\*([^*]+)\*\*/g, '$1') // Remove bold
+      .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1') // Remove links but keep text
+      .replace(/\n+/g, '\n') // Normalize line breaks
       .trim();
-    
-    description = cleaned.length > 300 
-      ? cleaned.substring(0, 300) + '...'
-      : cleaned;
   }
 
-  // Reviewers section
+  // Description with collapsible details
+  const descriptionHtml = cleanedDescription ? `
+<details>
+<summary><strong>📝 See description</strong></summary>
+<blockquote>
+<p>${cleanedDescription}</p>
+</blockquote>
+</details>` : '';
+
+  // Reviewers section - more compact
   let reviewersHtml = '';
   if (pr.reviewers && pr.reviewers.length > 0) {
     const reviewerBadges = pr.reviewers
       .map(r => `<a href="https://github.com/${r.login}"><img src="${r.avatar_url}" width="20" height="20" style="border-radius: 50%; vertical-align: middle;" alt="${r.login}" title="${r.login}"/></a>`)
       .join(' ');
-    reviewersHtml = `
-  <p>
-    <sub>✅ <strong>Reviewed by:</strong> ${reviewerBadges}</sub>
-  </p>`;
+    reviewersHtml = `<sub>✅ Reviewed by: ${reviewerBadges}</sub>`;
   } else if (pr.merged_by) {
-    reviewersHtml = `
-  <p>
-    <sub>✅ <strong>Merged by:</strong> <a href="https://github.com/${pr.merged_by}">@${pr.merged_by}</a></sub>
-  </p>`;
+    reviewersHtml = `<sub>✅ Merged by: <a href="https://github.com/${pr.merged_by}">@${pr.merged_by}</a></sub>`;
   }
 
   // Personal note
   const noteHtml = pr.note ? `
-  <blockquote>
-    <p>💡 <strong>My Impact:</strong> ${pr.note}</p>
-  </blockquote>` : '';
+<blockquote>
+  <p>💡 <strong>My Impact:</strong> ${pr.note}</p>
+</blockquote>` : '';
 
-  // Labels
+  // Labels - more compact
   const labelsHtml = pr.labels && pr.labels.length > 0
-    ? `<p>${pr.labels.slice(0, 5).map(l => `<img src="https://img.shields.io/badge/${encodeURIComponent(l.replace(/-/g, '--'))}-gray?style=flat-square" alt="${l}"/>`).join(' ')}</p>`
+    ? pr.labels.slice(0, 5).map(l => `<img src="https://img.shields.io/badge/${encodeURIComponent(l.replace(/-/g, '--'))}-gray?style=flat-square" alt="${l}"/>`).join(' ')
     : '';
 
   return `
-<div style="padding: 16px; border-left: 4px solid #0969da; margin: 12px 0; background: #f6f8fa;">
+<div style="padding: 12px 16px; border-left: 3px solid #0969da; margin: 10px 0; background: #f6f8fa; border-radius: 6px;">
 
-#### [${pr.pr_title}](${pr.pr_url})
+<h4 style="margin: 0 0 8px 0;">
+  <a href="${pr.pr_url}">${pr.pr_title}</a>
+</h4>
 
-${description ? `<p>${description}</p>` : ''}
-
-${noteHtml}
-${reviewersHtml}
-
-<p>
+<p style="margin: 4px 0; font-size: 0.9em;">
   <img src="https://img.shields.io/badge/📅_${encodeURIComponent(date)}-blue?style=flat-square" alt="Merged ${date}"/>
   <img src="https://img.shields.io/badge/📊_${encodeURIComponent(changes)}-success?style=flat-square" alt="Changes"/>
   ${files ? `<img src="https://img.shields.io/badge/📁_${encodeURIComponent(files)}-orange?style=flat-square" alt="${files}"/>` : ''}
-  <a href="${pr.pr_url}"><img src="https://img.shields.io/badge/View_PR-→-purple?style=flat-square" alt="View PR"/></a>
 </p>
 
-${labelsHtml}
+${reviewersHtml ? `<p style="margin: 4px 0;">${reviewersHtml}</p>` : ''}
+
+${labelsHtml ? `<p style="margin: 4px 0;">${labelsHtml}</p>` : ''}
+
+${descriptionHtml}
+
+${noteHtml}
 
 </div>
 `;

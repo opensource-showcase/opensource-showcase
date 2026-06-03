@@ -4,57 +4,40 @@ import type {
 } from '../../types/index.js';
 import type { SiteStats } from './utils.js';
 import {
-  cleanDescription,
   escapeHtml,
   formatDate,
   renderRichDescription,
 } from './utils.js';
 
-export function renderHero(contributor: Contributor, stats: SiteStats): string {
+export function renderHero(contributor: Contributor, _stats: SiteStats): string {
   const displayName = contributor.name || contributor.username;
 
-  return `<header class="hero">
-      <div class="shell">
-        <div class="profile">
-          <div class="identity">
-            <img class="avatar" src="https://github.com/${escapeHtml(contributor.username)}.png" alt="${escapeHtml(displayName)}" />
-            <div class="identity-copy">
-              <h1>${escapeHtml(displayName)}</h1>
-              <p class="handle"><a href="${escapeHtml(contributor.profile_url)}">@${escapeHtml(contributor.username)}</a></p>
-              ${contributor.bio ? `<p class="bio">${escapeHtml(contributor.bio)}</p>` : ''}
-            </div>
-          </div>
-          <div class="stats" aria-label="Contribution summary">
-            <div class="stat"><strong>${stats.totalContributions.toLocaleString()}</strong><span>contributions</span></div>
-            <div class="stat"><strong>${stats.totalProjects.toLocaleString()}</strong><span>projects</span></div>
-            <div class="stat"><strong>${stats.totalLanguages.toLocaleString()}</strong><span>languages</span></div>
+  return `<nav class="navbar">
+      <div class="shell navbar-inner">
+        <div class="nav-identity">
+          <img class="nav-avatar" src="https://github.com/${escapeHtml(contributor.username)}.png" alt="${escapeHtml(displayName)}" />
+          <div class="nav-info">
+            <span class="nav-name">${escapeHtml(displayName)}</span>
+            <span class="nav-handle"><a href="${escapeHtml(contributor.profile_url)}">@${escapeHtml(contributor.username)}</a></span>
           </div>
         </div>
+        <div class="nav-controls">
+          <input class="search" id="search" type="search" placeholder="Search contributions..." />
+          <div class="filters" id="filters-container"></div>
+        </div>
       </div>
-    </header>`;
+    </nav>`;
 }
 
-export function renderToolbar(languages: SiteStats['languages']): string {
-  const filters =
-    languages.length === 0
-      ? ''
-      : `<div class="filters" aria-label="Language filters">
-            <button class="filter is-active" type="button" data-language="all">All</button>
-            ${languages
-              .map(
-                (language) => `<button class="filter" type="button" data-language="${escapeHtml(language.name)}">
-              ${escapeHtml(language.name)} <span>${language.count}</span>
-            </button>`
-              )
-              .join('')}
-          </div>`;
-
-  return `<div class="toolbar">
-      <div class="shell toolbar-inner">
-        <input class="search" id="search" type="search" placeholder="Search repositories and pull requests" autocomplete="off" />
-        ${filters}
+export function renderMainContent(
+  grouped: Array<[string, EnrichedContribution[]]>
+): string {
+  return `<main class="shell">
+      <div id="results">
+        ${grouped.map(([repo, contributions]) => renderRepositorySection(repo, contributions)).join('')}
       </div>
-    </div>`;
+      <div class="empty" id="empty" hidden>No matching contributions found.</div>
+    </main>`;
 }
 
 export function renderRepositorySection(
@@ -94,14 +77,15 @@ export function renderRepositorySection(
 
 export function renderContributionCard(contribution: EnrichedContribution): string {
   const description = renderRichDescription(contribution.pr_body);
-  const repoDescription = cleanDescription(contribution.repo_description, 160);
-  const labels = contribution.labels.slice(0, 4);
+  const labels = contribution.labels.slice(0, 5);
   const language = contribution.language ?? 'Unknown';
   const reviewers = contribution.reviewers?.slice(0, 5) ?? [];
+  
+  // Simplified reviewer display
   const reviewHtml =
     reviewers.length > 0
       ? `<div class="reviewed-by">
-                  <span>Approved by</span>
+                  <span>✅ Approved by</span>
                   <div class="reviewers">${reviewers
                     .map(
                       (reviewer) =>
@@ -111,23 +95,36 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
                 </div>`
       : contribution.merged_by
         ? `<div class="reviewed-by">
-                  <span>Merged by</span>
+                  <span>✅ Merged by</span>
                   <a class="merged-by" href="https://github.com/${escapeHtml(contribution.merged_by)}">@${escapeHtml(contribution.merged_by)}</a>
                 </div>`
         : '';
 
+  // Personal impact note
+  const noteHtml = contribution.note
+    ? `<div class="impact-note">
+                  <span>💡 <strong>My Impact:</strong> ${escapeHtml(contribution.note)}</span>
+                </div>`
+    : '';
+
   return `<article class="contribution" data-title="${escapeHtml(contribution.pr_title)}" data-language="${escapeHtml(language)}">
-                <div class="contribution-main">
-                  <a class="pr-title" href="${escapeHtml(contribution.pr_url)}">${escapeHtml(contribution.pr_title)}</a>
-                  ${description ? `<div class="description">${description}</div>` : repoDescription ? `<p class="description-fallback">${escapeHtml(repoDescription)}</p>` : ''}
-                </div>
+                <a class="pr-title" href="${escapeHtml(contribution.pr_url)}">${escapeHtml(contribution.pr_title)}</a>
+                
+                ${description ? `<details class="description-details">
+                  <summary>📝 <strong>See description</strong></summary>
+                  <div class="description">${description}</div>
+                </details>` : ''}
+                
                 ${reviewHtml}
+                ${noteHtml}
+                
                 <div class="meta-row">
                   <span><strong>Merged</strong>${escapeHtml(formatDate(contribution.merged_at))}</span>
                   <span><strong>Language</strong>${escapeHtml(language)}</span>
                   <span><strong>Changes</strong>+${contribution.additions.toLocaleString()} / -${contribution.deletions.toLocaleString()}</span>
                   <span><strong>Files</strong>${contribution.files_changed.toLocaleString()}</span>
                 </div>
+                
                 ${
                   labels.length > 0
                     ? `<div class="labels">${labels
@@ -136,17 +133,6 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
                     : ''
                 }
               </article>`;
-}
-
-export function renderMainContent(
-  grouped: Array<[string, EnrichedContribution[]]>
-): string {
-  return `<main class="shell">
-      <div id="results">
-        ${grouped.map(([repo, contributions]) => renderRepositorySection(repo, contributions)).join('')}
-      </div>
-      <div class="empty" id="empty" hidden>No matching contributions.</div>
-    </main>`;
 }
 
 export function renderFooter(updatedAt: string): string {

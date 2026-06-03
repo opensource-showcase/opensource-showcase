@@ -8,7 +8,6 @@ import {
   renderFooter,
   renderHero,
   renderMainContent,
-  renderToolbar,
 } from './site/components.js';
 import {
   calculateStats,
@@ -25,6 +24,17 @@ export function generateSite(data: ContributionsData): string {
   const displayName = data.contributor.name || data.contributor.username;
   const pageTitle = `${displayName} - Open Source Contributions`;
 
+  // Generate language filters HTML
+  const languageFilters = stats.languages.length > 0
+    ? `<button class="filter is-active" data-language="all">All</button>
+       ${stats.languages
+         .map(
+           (lang) =>
+             `<button class="filter" data-language="${escapeHtml(lang.name)}">${escapeHtml(lang.name)} <span>${lang.count}</span></button>`
+         )
+         .join('')}`
+    : '';
+
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -36,10 +46,9 @@ export function generateSite(data: ContributionsData): string {
   </head>
   <body>
     ${renderHero(data.contributor, stats)}
-    ${renderToolbar(stats.languages)}
     ${renderMainContent(grouped)}
     ${renderFooter(data.updated_at)}
-    ${renderScript()}
+    ${renderScript(languageFilters)}
   </body>
 </html>`;
 }
