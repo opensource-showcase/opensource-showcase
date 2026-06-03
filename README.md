@@ -8,8 +8,10 @@
 - ✅ Fetch all your merged Pull Requests
 - ✅ Smart filtering (low stars, trivial PRs, bots)
 - ✅ Interactive selection UI
-- ✅ Auto-creates public `.opensource` repository for sharing and GitHub Pages
+- ✅ Auto-creates public `.opensource` repository for sharing
+- ✅ Enables GitHub Pages for the generated portfolio when GitHub allows it
 - ✅ Generates beautiful README with organization logos and PR descriptions
+- ✅ Generates a professional `index.html` portfolio page for GitHub Pages
 
 ## Installation
 
@@ -74,6 +76,9 @@ The CLI creates a `.opensource` repository with:
 ### contributions.json
 Machine-readable contribution data following the [.opensource spec](../SPEC.md)
 
+### index.html
+A responsive static portfolio page ready for GitHub Pages.
+
 ### README.md
 Beautiful visualization with:
 - Organization logos
@@ -81,6 +86,25 @@ Beautiful visualization with:
 - Stars, languages, merge dates
 - Code changes (+/-)
 - Labels
+
+## GitHub Pages
+
+The CLI writes `index.html` and tries to enable GitHub Pages automatically from the `main` branch root.
+
+By default, your portfolio page will be available at:
+
+```text
+https://YOUR_USERNAME.github.io/.opensource/
+```
+
+If the repository already has a custom domain configured, the CLI respects it and shows a warning. Remove the custom domain from repository Settings → Pages if you want to use the free `github.io` URL.
+
+If GitHub Pages cannot be enabled automatically, enable it manually:
+
+1. Open `https://github.com/YOUR_USERNAME/.opensource/settings/pages`
+2. Set source to `Deploy from a branch`
+3. Select the `main` branch and root folder
+4. Save
 
 ### Example Output
 

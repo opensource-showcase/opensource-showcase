@@ -8,6 +8,7 @@ import { logger } from '../utils/logger.js';
 import { getFilterReasonText, getFilterStats } from '../filter/filter-prs.js';
 import type { ContributionWithFilter, EnrichedContribution } from '../types/index.js';
 import type { ContributedRepo } from '../github/fetch-repos.js';
+import type { SaveContributionsResult } from '../repo/manage-repo.js';
 
 const { Separator } = inquirer;
 type Separator = InstanceType<typeof inquirer.Separator>;
@@ -271,19 +272,40 @@ export async function confirmSave(): Promise<boolean> {
 export function showSummary(
   username: string,
   contributionsCount: number,
-  repoUrl: string
+  result: SaveContributionsResult
 ): void {
   logger.newline();
   logger.title('✨ Success!');
   logger.newline();
   logger.keyValue('Username', username);
   logger.keyValue('Contributions', contributionsCount.toString());
-  logger.keyValue('Repository', repoUrl);
+  logger.keyValue('Repository', result.repoUrl);
+  logger.keyValue('GitHub Pages', result.pagesUrl);
   logger.newline();
   logger.info('Your contributions are now available at:');
-  logger.plain(`  ${chalk.cyan(repoUrl)}`);
+  logger.plain(`  ${chalk.cyan(result.repoUrl)}`);
+  logger.plain(`  ${chalk.cyan(result.pagesUrl)}`);
+  if (result.customDomain) {
+    logger.newline();
+    logger.warning(`Custom domain detected: ${result.customDomain}`);
+    logger.plain(
+      chalk.gray(
+        'GitHub Pages may redirect to that domain. Remove it in Settings → Pages if you want the github.io URL.'
+      )
+    );
+  }
+  if (!result.pagesEnabled) {
+    logger.newline();
+    logger.warning('GitHub Pages could not be enabled automatically.');
+    logger.plain(
+      chalk.gray(
+        'Enable it manually from repository Settings → Pages → Deploy from a branch → main / root.'
+      )
+    );
+  }
   logger.newline();
   logger.plain(chalk.gray('Next steps:'));
+  logger.listItem('Share your GitHub Pages portfolio link');
   logger.listItem('Share your contributions on your resume/portfolio');
   logger.listItem('Run `opensource-showcase status` to view your contributions');
   logger.listItem('Run the tool again anytime to update');

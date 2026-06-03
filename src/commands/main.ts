@@ -222,8 +222,8 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
   logger.newline();
   logger.subtitle('Step 8: Saving Contributions');
 
-  const repoUrl = await saveContributions(octokit, username, user, selected);
+  const result = await saveContributions(octokit, username, user, selected);
 
   // Show summary
-  showSummary(username, selected.length, repoUrl);
+  showSummary(username, selected.length, result);
 }

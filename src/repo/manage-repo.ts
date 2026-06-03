@@ -10,6 +10,8 @@ import {
   OPENSOURCE_REPO_NAME,
   CONTRIBUTIONS_FILE,
   BACKUP_FILE,
+  INDEX_FILE,
+  README_FILE,
   SPEC_VERSION,
 } from '../constants.js';
 import type {
@@ -19,6 +21,85 @@ import type {
   GitHubUser,
 } from '../types/index.js';
 import { generateReadme } from './generate-readme.js';
+import { generateSite } from './generate-site.js';
+
+export interface SaveContributionsResult {
+  repoUrl: string;
+  pagesUrl: string;
+  pagesEnabled: boolean;
+  customDomain?: string;
+}
+
+interface GitHubPagesResult {
+  enabled: boolean;
+  customDomain?: string;
+}
+
+async function getFileSha(
+  octokit: Octokit,
+  username: string,
+  path: string
+): Promise<string | undefined> {
+  try {
+    const { data } = await octokit.rest.repos.getContent({
+      owner: username,
+      repo: OPENSOURCE_REPO_NAME,
+      path,
+    });
+
+    return 'sha' in data ? data.sha : undefined;
+  } catch {
+    return undefined;
+  }
+}
+
+async function enableGitHubPages(
+  octokit: Octokit,
+  username: string
+): Promise<GitHubPagesResult> {
+  const source = {
+    branch: 'main',
+    path: '/',
+  } as const;
+
+  try {
+    const { data: pages } = await octokit.request('GET /repos/{owner}/{repo}/pages', {
+      owner: username,
+      repo: OPENSOURCE_REPO_NAME,
+    });
+
+    await octokit.request('PUT /repos/{owner}/{repo}/pages', {
+      owner: username,
+      repo: OPENSOURCE_REPO_NAME,
+      source,
+    });
+
+    return {
+      enabled: true,
+      customDomain: pages.cname ?? undefined,
+    };
+  } catch (error) {
+    const err = error as { status?: number };
+
+    if (err.status !== 404) {
+      logger.warning('Could not update GitHub Pages settings automatically');
+      return { enabled: false };
+    }
+  }
+
+  try {
+    await octokit.request('POST /repos/{owner}/{repo}/pages', {
+      owner: username,
+      repo: OPENSOURCE_REPO_NAME,
+      source,
+    });
+
+    return { enabled: true };
+  } catch {
+    logger.warning('Could not enable GitHub Pages automatically');
+    return { enabled: false };
+  }
+}
 
 /**
  * Check if .opensource repository exists
@@ -136,7 +217,7 @@ export async function saveContributions(
   username: string,
   user: GitHubUser,
   contributions: EnrichedContribution[]
-): Promise<string> {
+): Promise<SaveContributionsResult> {
   const spinner = ora('Saving contributions...').start();
 
   try {
@@ -150,35 +231,9 @@ export async function saveContributions(
 
     // Get existing contributions for backup
     const existing = await getExistingContributions(octokit, username);
-    let contributionsFileSha: string | undefined;
-    let readmeFileSha: string | undefined;
-
-    // Get file SHAs if they exist (needed for updates)
-    try {
-      const { data: contributionsData } = await octokit.rest.repos.getContent({
-        owner: username,
-        repo: OPENSOURCE_REPO_NAME,
-        path: CONTRIBUTIONS_FILE,
-      });
-      if ('sha' in contributionsData) {
-        contributionsFileSha = contributionsData.sha;
-      }
-    } catch {
-      // File doesn't exist yet
-    }
-
-    try {
-      const { data: readmeData } = await octokit.rest.repos.getContent({
-        owner: username,
-        repo: OPENSOURCE_REPO_NAME,
-        path: 'README.md',
-      });
-      if ('sha' in readmeData) {
-        readmeFileSha = readmeData.sha;
-      }
-    } catch {
-      // File doesn't exist yet
-    }
+    const contributionsFileSha = await getFileSha(octokit, username, CONTRIBUTIONS_FILE);
+    const readmeFileSha = await getFileSha(octokit, username, README_FILE);
+    const indexFileSha = await getFileSha(octokit, username, INDEX_FILE);
 
     // Create backup if existing data exists
     if (existing && contributionsFileSha) {
@@ -246,16 +301,41 @@ export async function saveContributions(
     await octokit.rest.repos.createOrUpdateFileContents({
       owner: username,
       repo: OPENSOURCE_REPO_NAME,
-      path: 'README.md',
+      path: README_FILE,
       message: readmeFileSha ? '📝 Update README' : '📝 Initialize README',
       content: Buffer.from(readmeContent).toString('base64'),
       sha: readmeFileSha,
     });
 
+    // Create/update GitHub Pages site
+    spinner.text = 'Generating index.html...';
+    const siteContent = generateSite(contributionsData);
+
+    await octokit.rest.repos.createOrUpdateFileContents({
+      owner: username,
+      repo: OPENSOURCE_REPO_NAME,
+      path: INDEX_FILE,
+      message: indexFileSha ? '🌐 Update GitHub Pages site' : '🌐 Initialize GitHub Pages site',
+      content: Buffer.from(siteContent).toString('base64'),
+      sha: indexFileSha,
+    });
+
+    spinner.text = 'Enabling GitHub Pages...';
+    const pages = await enableGitHubPages(octokit, username);
+
     const repoUrl = `https://github.com/${username}/${OPENSOURCE_REPO_NAME}`;
+    const githubPagesUrl = `https://${username}.github.io/${OPENSOURCE_REPO_NAME}/`;
+    const pagesUrl = pages.customDomain
+      ? `https://${pages.customDomain}/${OPENSOURCE_REPO_NAME}/`
+      : githubPagesUrl;
     spinner.succeed('Contributions saved successfully!');
 
-    return repoUrl;
+    return {
+      repoUrl,
+      pagesUrl,
+      pagesEnabled: pages.enabled,
+      customDomain: pages.customDomain,
+    };
   } catch (error) {
     spinner.fail('Failed to save contributions');
     throw new RepositoryError(

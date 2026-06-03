@@ -10,6 +10,7 @@ export const OPENSOURCE_REPO_NAME = '.opensource';
 export const CONTRIBUTIONS_FILE = 'contributions.json';
 export const BACKUP_FILE = 'contributions.backup.json';
 export const README_FILE = 'README.md';
+export const INDEX_FILE = 'index.html';
 
 export const GITHUB_SCOPES = ['public_repo', 'read:user'] as const;
 
