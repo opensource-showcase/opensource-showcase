@@ -1,6 +1,10 @@
 import type { Contributor, EnrichedContribution } from '../../types/index.js';
 import type { SiteStats } from './utils.js';
-import { escapeHtml, formatDate, renderRichDescription } from './utils.js';
+import { escapeHtml, formatDate } from './utils.js';
+
+function stringifyScriptJson(value: string): string {
+  return JSON.stringify(value).replace(/</g, '\\u003c');
+}
 
 export function renderHero(contributor: Contributor, _stats: SiteStats): string {
   const displayName = contributor.name || contributor.username;
@@ -16,7 +20,6 @@ export function renderHero(contributor: Contributor, _stats: SiteStats): string 
         </div>
         <div class="nav-controls">
           <input class="search" id="search" type="search" placeholder="Search contributions..." />
-          <div class="filters" id="filters-container"></div>
         </div>
       </div>
     </nav>`;
@@ -65,7 +68,7 @@ export function renderRepositorySection(
 }
 
 export function renderContributionCard(contribution: EnrichedContribution): string {
-  const description = renderRichDescription(contribution.pr_body);
+  const description = contribution.pr_body?.trim();
   const labels = contribution.labels.slice(0, 5);
   const language = contribution.language ?? 'Unknown';
   const reviewers = contribution.reviewers?.slice(0, 5) ?? [];
@@ -103,7 +106,8 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
                   description
                     ? `<details class="description-details">
                   <summary>📝 <strong>See description</strong></summary>
-                  <div class="description">${description}</div>
+                  <script class="description-markdown" type="application/json">${stringifyScriptJson(description)}</script>
+                  <div class="description markdown-body"></div>
                 </details>`
                     : ''
                 }
@@ -111,12 +115,16 @@ export function renderContributionCard(contribution: EnrichedContribution): stri
                 ${reviewHtml}
                 ${noteHtml}
                 
-                <div class="meta-row">
-                  <span><strong>Merged</strong>${escapeHtml(formatDate(contribution.merged_at))}</span>
-                  <span><strong>Language</strong>${escapeHtml(language)}</span>
-                  <span><strong>Changes</strong>+${contribution.additions.toLocaleString()} / -${contribution.deletions.toLocaleString()}</span>
-                  <span><strong>Files</strong>${contribution.files_changed.toLocaleString()}</span>
-                </div>
+                <ul class="pr-facts">
+                  <li><strong>Merged</strong> ${escapeHtml(formatDate(contribution.merged_at))}</li>
+                  <li><strong>Language</strong> ${escapeHtml(language)}</li>
+                  <li class="change-fact">
+                    <strong>Changes</strong>
+                    <span class="diff-badge add">+${contribution.additions.toLocaleString()}</span>
+                    <span class="diff-badge del">-${contribution.deletions.toLocaleString()}</span>
+                  </li>
+                  <li><strong>Files</strong> ${contribution.files_changed.toLocaleString()}</li>
+                </ul>
                 
                 ${
                   labels.length > 0

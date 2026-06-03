@@ -14,18 +14,6 @@ export function generateSite(data: ContributionsData): string {
   const displayName = data.contributor.name || data.contributor.username;
   const pageTitle = `${displayName} - Open Source Contributions`;
 
-  // Generate language filters HTML
-  const languageFilters =
-    stats.languages.length > 0
-      ? `<button class="filter is-active" data-language="all">All</button>
-       ${stats.languages
-         .map(
-           (lang) =>
-             `<button class="filter" data-language="${escapeHtml(lang.name)}">${escapeHtml(lang.name)} <span>${lang.count}</span></button>`
-         )
-         .join('')}`
-      : '';
-
   return `<!doctype html>
 <html lang="en">
   <head>
@@ -39,7 +27,7 @@ export function generateSite(data: ContributionsData): string {
     ${renderHero(data.contributor, stats)}
     ${renderMainContent(grouped)}
     ${renderFooter(data.updated_at)}
-    ${renderScript(languageFilters)}
+    ${renderScript()}
   </body>
 </html>`;
 }

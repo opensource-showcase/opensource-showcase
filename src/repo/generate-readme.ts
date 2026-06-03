@@ -88,31 +88,10 @@ export function generateReadme(
     totalLanguages: Object.keys(stats.languages).length,
   });
 
-  // Featured projects section
-  readme += `\n## 🌟 Featured Projects\n\n`;
-  readme += `<p align="center">`;
+  // Contributions by project
+  readme += `\n## Contributions by Project\n\n`;
 
   const grouped = groupByRepository(contributions);
-  const topRepos = [...grouped.entries()]
-    .sort((a, b) => {
-      const aStars = a[1][0]?.repo_stars || 0;
-      const bStars = b[1][0]?.repo_stars || 0;
-      return bStars - aStars;
-    })
-    .slice(0, 3);
-
-  topRepos.forEach(([repo, contribs]) => {
-    const stars = (contribs[0]?.repo_stars || 0).toLocaleString();
-    readme += `\n  <a href="#${repo.replace(/\//g, '')}">`;
-    readme += `<img src="https://img.shields.io/badge/${encodeURIComponent(repo)}-${stars}%20⭐-blue?style=for-the-badge&logo=github" alt="${repo}"/>`;
-    readme += `</a>`;
-  });
-
-  readme += `\n</p>\n\n---\n`;
-
-  // Contributions by project
-  readme += `\n## 📦 Contributions by Project\n\n`;
-
   const sortedRepos = [...grouped.entries()].sort((a, b) => {
     const aStars = a[1][0]?.repo_stars || 0;
     const bStars = b[1][0]?.repo_stars || 0;
