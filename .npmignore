@@ -1,0 +1,42 @@
+# Source files
+src/
+test/
+*.test.ts
+*.spec.ts
+
+# Environment
+.env
+.env.*
+
+# Config files
+tsconfig.json
+vitest.config.ts
+eslint.config.js
+.prettierrc.json
+
+# Editor
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build artifacts
+*.tsbuildinfo
+
+# Documentation (keep README.md)
+SETUP.md
+PUBLISHING.md
+QUICKSTART.md
+VALIDATION.md
+
+# Specs
+../prd.md
+../SPEC.md
+../ROADMAP.md
+../MONETIZATION.md

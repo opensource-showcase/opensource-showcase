@@ -1,0 +1,114 @@
+# 🚀 Publishing to npm - Step by Step
+
+## Before You Start
+
+1. Make sure the CLI works locally
+2. Test it: npm start
+3. Make sure it builds: npm run build
+
+## Step 1: Create npm Account (if you don't have one)
+
+Visit: https://www.npmjs.com/signup
+
+## Step 2: Update package.json
+
+Edit package.json and update:
+- "author": "Your Name <your.email@example.com>"
+- "repository": "https://github.com/yourusername/opensource-showcase"
+- Change "yourusername" to your actual GitHub username
+
+## Step 3: Check Package Name
+
+The name "opensource-showcase" might be taken.
+
+Check: https://www.npmjs.com/package/opensource-showcase
+
+If taken, change to:
+- "@yourusername/opensource-showcase" (scoped)
+- "opensource-showcase-cli"
+- "os-showcase"
+
+Update in package.json: "name": "@yourusername/opensource-showcase"
+
+## Step 4: Build the Package
+
+cd /Users/hasithasandun/Documents/Funny/opensource-showcase
+npm run build
+
+## Step 5: Test Locally
+
+npm pack
+# This creates: opensource-showcase-0.1.0.tgz
+
+# Install it globally to test
+npm install -g ./opensource-showcase-0.1.0.tgz
+
+# Test it
+opensource-showcase --help
+
+# Uninstall after testing
+npm uninstall -g opensource-showcase
+
+## Step 6: Login to npm
+
+npm login
+
+Enter:
+- Username
+- Password
+- Email
+- 2FA code (if enabled)
+
+## Step 7: Publish!
+
+# For public packages
+npm publish --access public
+
+# For scoped packages (@username/package)
+npm publish --access public
+
+## Step 8: Verify
+
+Visit: https://www.npmjs.com/package/opensource-showcase
+(or your package name)
+
+## Step 9: Test Installation
+
+npm install -g opensource-showcase
+# or
+npx opensource-showcase
+
+## Share with Friends!
+
+Now they can install:
+npm install -g opensource-showcase
+
+Or run without installing:
+npx opensource-showcase
+
+---
+
+## Updating Later
+
+1. Make your changes
+2. Update version: npm version patch (0.1.0 → 0.1.1)
+   - or: npm version minor (0.1.0 → 0.2.0)
+   - or: npm version major (0.1.0 → 1.0.0)
+3. Build: npm run build
+4. Publish: npm publish
+
+---
+
+## Troubleshooting
+
+"Package name already exists"
+→ Use scoped name: @yourusername/opensource-showcase
+
+"You must be logged in"
+→ Run: npm login
+
+"You do not have permission"
+→ Make sure you own the package name
+
+"prepublishOnly failed"
+→ Fix build errors first: npm run build
