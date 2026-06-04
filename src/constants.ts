@@ -11,8 +11,9 @@ export const CONTRIBUTIONS_FILE = 'contributions.json';
 export const BACKUP_FILE = 'contributions.backup.json';
 export const README_FILE = 'README.md';
 export const INDEX_FILE = 'index.html';
+export const SHOWCASE_COMMAND_WORKFLOW_FILE = '.github/workflows/showcase-command.yml';
 
-export const GITHUB_SCOPES = ['public_repo', 'read:user'] as const;
+export const GITHUB_SCOPES = ['public_repo', 'read:user', 'workflow'] as const;
 
 export const DEFAULT_CONFIG: UserConfig = {
   minStars: 100, // Only show repos with 100+ stars by default

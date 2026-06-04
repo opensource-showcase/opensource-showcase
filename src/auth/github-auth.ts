@@ -3,7 +3,7 @@
  */
 
 import { createOAuthDeviceAuth } from '@octokit/auth-oauth-device';
-import { Octokit } from '@octokit/rest';
+import type { Octokit } from '@octokit/rest';
 import open from 'open';
 import ora from 'ora';
 import { GITHUB_SCOPES } from '../constants.js';
@@ -11,6 +11,7 @@ import { logger } from '../utils/logger.js';
 import { AuthenticationError } from '../utils/errors.js';
 import { storeToken, storeUsername, storeUser, getStoredToken } from '../utils/config.js';
 import type { AuthContext } from '../types/index.js';
+import { createOctokit } from '../github/octokit.js';
 
 const PLACEHOLDER_CLIENT_ID: string = 'YOUR_PUBLIC_CLIENT_ID_HERE';
 const CLIENT_ID: string = 'Ov23li4P4stPDon9vAt1';
@@ -61,7 +62,7 @@ export async function authenticateWithGitHub(): Promise<AuthContext> {
     spinner.text = 'Verifying authentication...';
 
     // Create Octokit instance with the token
-    const octokit = new Octokit({ auth: token });
+    const octokit = createOctokit(token);
 
     // Get user information
     const { data: user } = await octokit.rest.users.getAuthenticated();
@@ -97,7 +98,7 @@ export async function getAuthenticatedClient(): Promise<AuthContext> {
     throw new AuthenticationError('No saved GitHub login found. Please login first.');
   }
 
-  const octokit = new Octokit({ auth: authToken });
+  const octokit = createOctokit(authToken);
 
   try {
     const { data: user } = await octokit.rest.users.getAuthenticated();

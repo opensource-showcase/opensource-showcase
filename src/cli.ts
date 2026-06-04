@@ -15,6 +15,13 @@ import { logoutCommand } from './commands/logout.js';
 import { configCommand } from './commands/config.js';
 import { validateCommand } from './commands/validate.js';
 import { whoamiCommand } from './commands/whoami.js';
+import {
+  addContributionCommand,
+  issueCommand,
+  refreshContributionsCommand,
+  removeContributionCommand,
+  setupBotCommand,
+} from './commands/showcase.js';
 
 const program = new Command();
 
@@ -112,6 +119,69 @@ program
   .action(async (file) => {
     try {
       await validateCommand(file);
+    } catch (error) {
+      handleError(error);
+    }
+  });
+
+// Add contribution command
+program
+  .command('add')
+  .description('Add one merged PR to an existing .opensource checkout')
+  .argument('<pr-url>', 'GitHub pull request URL')
+  .action(async (prUrl) => {
+    try {
+      await addContributionCommand(prUrl);
+    } catch (error) {
+      handleError(error);
+    }
+  });
+
+// Remove contribution command
+program
+  .command('remove')
+  .description('Remove one PR from an existing .opensource checkout')
+  .argument('<pr-url>', 'GitHub pull request URL')
+  .action(async (prUrl) => {
+    try {
+      await removeContributionCommand(prUrl);
+    } catch (error) {
+      handleError(error);
+    }
+  });
+
+// Refresh contribution metadata command
+program
+  .command('refresh')
+  .description('Refresh metadata for PRs already in an existing .opensource checkout')
+  .action(async () => {
+    try {
+      await refreshContributionsCommand();
+    } catch (error) {
+      handleError(error);
+    }
+  });
+
+// Issue-command bridge for GitHub Actions
+program
+  .command('command')
+  .description('Run a /showcase command from an issue or issue comment body')
+  .argument('<body>', 'Issue or comment body containing a /showcase command')
+  .action(async (body) => {
+    try {
+      await issueCommand(body);
+    } catch (error) {
+      handleError(error);
+    }
+  });
+
+// Setup issue-command workflow
+program
+  .command('setup-bot')
+  .description('Install the /showcase issue-command workflow in your .opensource repo')
+  .action(async () => {
+    try {
+      await setupBotCommand();
     } catch (error) {
       handleError(error);
     }
