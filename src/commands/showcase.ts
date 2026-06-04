@@ -103,19 +103,34 @@ async function fetchContribution(
   octokit: Octokit,
   prRef: PullRequestRef
 ): Promise<EnrichedContribution> {
-  const [{ data: pr }, repository, prDetails] = await Promise.all([
-    octokit.rest.pulls.get({
+  let pr: Awaited<ReturnType<typeof octokit.rest.pulls.get>>['data'];
+
+  try {
+    const { data } = await octokit.rest.pulls.get({
       owner: prRef.owner,
       repo: prRef.repo,
       pull_number: prRef.number,
-    }),
-    fetchRepository(octokit, prRef.owner, prRef.repo),
-    fetchPRDetails(octokit, prRef.owner, prRef.repo, prRef.number),
-  ]);
+    });
+    pr = data;
+  } catch (error) {
+    const err = error as { status?: number };
+    if (err.status === 404) {
+      throw new ValidationError(
+        `Could not access ${prRef.url}. Check that the PR URL is correct and the repository is public. Private repositories are not supported by the .opensource issue-command workflow.`
+      );
+    }
+
+    throw error;
+  }
 
   if (!pr.merged_at) {
     throw new ValidationError(`PR is not merged: ${prRef.url}`);
   }
+
+  const [repository, prDetails] = await Promise.all([
+    fetchRepository(octokit, prRef.owner, prRef.repo),
+    fetchPRDetails(octokit, prRef.owner, prRef.repo, prRef.number),
+  ]);
 
   return {
     repo: `${prRef.owner}/${prRef.repo}`,
@@ -212,7 +227,7 @@ export function parseShowcaseCommand(body: string): ParsedCommand {
     .filter(Boolean);
 
   for (const line of lines) {
-    const match = line.match(/^\/?showcase\s+(add|remove|refresh)(?:\s+(\S+))?/i);
+    const match = line.match(/^(?:\/|@)?showcase\s+(add|remove|refresh)(?:\s+(\S+))?/i);
     if (!match || !match[1]) continue;
 
     const action = match[1].toLowerCase() as ShowcaseAction;
@@ -226,7 +241,7 @@ export function parseShowcaseCommand(body: string): ParsedCommand {
   }
 
   throw new ValidationError(
-    'No showcase command found. Use /showcase add <pr-url>, /showcase remove <pr-url>, or /showcase refresh.'
+    'No showcase command found. Use /showcase add <pr-url>, showcase add <pr-url>, /showcase remove <pr-url>, or /showcase refresh.'
   );
 }
 
@@ -287,7 +302,7 @@ export async function setupBotCommand(): Promise<void> {
 
   logger.success(`Issue-command bot workflow installed in ${user.login}/${OPENSOURCE_REPO_NAME}`);
   logger.info(`Command issue: ${commandIssueUrl}`);
-  logger.info('Comment there with /showcase add <pr-url>');
+  logger.info('Comment there with /showcase add <pr-url> or showcase add <pr-url>');
 }
 
 async function getWorkflowFileSha(octokit: Octokit, username: string): Promise<string | undefined> {
@@ -329,6 +344,7 @@ async function upsertWorkflowFile(
 }
 
 async function ensureCommandIssue(octokit: Octokit, username: string): Promise<string> {
+  const body = generateCommandIssueBody();
   const { data: existingIssues } = await octokit.rest.issues.listForRepo({
     owner: username,
     repo: OPENSOURCE_REPO_NAME,
@@ -338,6 +354,15 @@ async function ensureCommandIssue(octokit: Octokit, username: string): Promise<s
 
   const existing = existingIssues.find((issue) => issue.title === COMMAND_ISSUE_TITLE);
   if (existing) {
+    if (existing.body !== body) {
+      await octokit.rest.issues.update({
+        owner: username,
+        repo: OPENSOURCE_REPO_NAME,
+        issue_number: existing.number,
+        body,
+      });
+    }
+
     return existing.html_url;
   }
 
@@ -345,18 +370,44 @@ async function ensureCommandIssue(octokit: Octokit, username: string): Promise<s
     owner: username,
     repo: OPENSOURCE_REPO_NAME,
     title: COMMAND_ISSUE_TITLE,
-    body: `Use comments on this issue to update your open source showcase.
+    body,
+  });
 
-Examples:
+  return issue.html_url;
+}
+
+function generateCommandIssueBody(): string {
+  return `# Showcase command center
+
+Use comments on this issue to update your open source showcase.
+
+<p align="center">
+  <img src="https://img.shields.io/badge/showcase-commands-0969da?style=for-the-badge" alt="Showcase commands">
+</p>
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| \`/showcase add <pr-url>\` | Adds one merged public pull request to \`contributions.json\`, then regenerates \`README.md\` and \`index.html\`. |
+| \`showcase add <pr-url>\` | Same as above, without the slash. |
+| \`/showcase remove <pr-url>\` | Removes that pull request from your showcase and regenerates the files. |
+| \`/showcase refresh\` | Re-fetches metadata for pull requests already in your showcase: title, description, stars, language, additions, deletions, files changed, reviewers, and merge data. It does not discover or add new PRs. |
+
+## Examples
 
 \`\`\`txt
 /showcase add https://github.com/org/repo/pull/123
+showcase add https://github.com/org/repo/pull/123
 /showcase remove https://github.com/org/repo/pull/123
 /showcase refresh
 \`\`\`
 
-Only explicitly provided pull requests are added. The workflow will ignore commands from users who are not repository owners, members, or collaborators.`,
-  });
+## Notes
 
-  return issue.html_url;
+- Only explicitly provided pull requests are added.
+- Private repositories are not supported by this no-server workflow.
+- Prefer \`/showcase\` or plain \`showcase\`. Avoid \`@showcase\` because it can mention a GitHub user.
+- Commands are ignored unless they come from repository owners, members, or collaborators.
+- The workflow reacts with 🚀 on success and 😕 on failure, then comments with the result.`;
 }
