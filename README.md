@@ -1,7 +1,7 @@
 # opensource-showcase
 
 <p align="center">
-  <img width="800" alt="opensource-showcase" src="https://github.com/user-attachments/assets/8c7f9fa9-904e-4734-9f68-3b9b882f4ea6" />
+  <img width="800" alt="opensource-showcase" src="https://raw.githubusercontent.com/opensource-showcase/opensource-showcase/main/images/logo-banner.png">
 </p>
 
 <p align="center">
@@ -16,7 +16,7 @@
 
 ## Overview
 
-opensource-showcase helps developers document their open source work by automatically fetching merged pull requests from GitHub, applying intelligent filters, and generating a professional portfolio. The tool creates a dedicated repository with both human-readable and machine-readable formats of your contribution history.
+opensource-showcase helps developers document their open source work by curating merged pull requests from GitHub and generating a professional portfolio. The tool creates a dedicated `.opensource` repository with a web portfolio, README, and machine-readable contribution data.
 
 ## Installation
 
@@ -49,6 +49,20 @@ npm install -g opensource-showcase
    - `index.html` - Interactive portfolio page
    - `README.md` - Formatted contribution list
 
+5. Optional: install the issue-command workflow so you can add or remove PRs later from a GitHub issue:
+
+   ```bash
+   opensource-showcase setup-bot
+   ```
+
+   The command creates or updates a `Showcase commands` issue in your `.opensource` repo. Comment there with:
+
+   ```txt
+   /showcase add https://github.com/org/repo/pull/123
+   showcase remove https://github.com/org/repo/pull/123
+   /showcase refresh
+   ```
+
 ## Features
 
 ### Automatic Data Collection
@@ -72,9 +86,17 @@ npm install -g opensource-showcase
 
 ### Professional Output
 
-- GitHub Pages-ready HTML portfolio with search and filtering
+- GitHub Pages-ready HTML portfolio with search
 - Markdown README with organization logos and detailed PR information
 - JSON export following the .opensource specification
+
+### Issue Commands
+
+- Add one explicit public merged PR from a comment
+- Remove one PR from the showcase
+- Refresh metadata for already selected PRs
+- GitHub Actions replies with success/failure comments and emoji reactions
+- No server or GitHub App required
 
 ## Commands
 
@@ -85,6 +107,10 @@ opensource-showcase whoami       # Show authenticated user
 opensource-showcase status       # Display current contributions
 opensource-showcase config       # View or edit configuration
 opensource-showcase logout       # Clear authentication
+opensource-showcase add <pr-url> # Add one PR from a local .opensource checkout
+opensource-showcase remove <pr-url> # Remove one PR from a local .opensource checkout
+opensource-showcase refresh      # Refresh already selected PR metadata
+opensource-showcase setup-bot    # Install issue-command workflow in .opensource
 opensource-showcase --all        # Bypass filtering
 opensource-showcase --fresh      # Start from scratch, ignore existing data
 ```
@@ -94,6 +120,23 @@ opensource-showcase --fresh      # Start from scratch, ignore existing data
 - `--min-stars=<number>` - Set minimum repository stars (default: 100)
 - `--all` - Include all PRs without filtering
 - `--fresh` - Ignore existing contributions and start fresh
+
+## Issue Command Workflow
+
+`setup-bot` installs a GitHub Actions workflow in your own `.opensource` repository. It also creates or updates an issue titled `Showcase commands`.
+
+Use comments on that issue to manage the portfolio:
+
+| Command                     | Action                                                                                                   |
+| --------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `/showcase add <pr-url>`    | Adds one merged public pull request and regenerates `contributions.json`, `README.md`, and `index.html`. |
+| `showcase add <pr-url>`     | Same as above, without the slash.                                                                        |
+| `/showcase remove <pr-url>` | Removes that pull request from the showcase and regenerates files.                                       |
+| `/showcase refresh`         | Re-fetches metadata for PRs already in the showcase. It does not discover or add new PRs.                |
+
+The workflow only accepts commands from repository owners, members, or collaborators. It uses the built-in GitHub Actions `GITHUB_TOKEN`, so users do not need to create a secret.
+
+`refresh` updates metadata such as title, description, stars, language, additions, deletions, changed files, reviewers, and merge data for PRs already stored in `contributions.json`.
 
 ## Configuration
 
@@ -135,7 +178,6 @@ Machine-readable JSON following the [.opensource specification](https://github.c
 A static HTML portfolio page with:
 
 - Search functionality across all contributions
-- Language-based filtering
 - Responsive design
 - Rich markdown rendering for PR descriptions
 - Reviewer information with avatars
@@ -212,6 +254,24 @@ src/
 
 - Run `opensource-showcase logout` to clear credentials
 - Run `opensource-showcase login` to re-authenticate
+
+**setup-bot cannot create workflow file:**
+
+- Run `opensource-showcase logout`
+- Run `opensource-showcase login`
+- Run `opensource-showcase setup-bot`
+- The bot setup requires the GitHub OAuth `workflow` scope
+
+**Issue command cannot add a PR:**
+
+- Verify the PR URL is correct
+- Verify the PR is merged
+- Verify the repository is public
+- Private repositories are not supported by the no-server issue-command workflow
+
+## npm README Images
+
+The npm registry can be stricter than GitHub about externally hosted images. Avoid relying on GitHub user-attachment screenshots in this README; badges from stable providers such as Shields.io are used because they render reliably on both GitHub and npm.
 
 **GitHub Pages not working:**
 

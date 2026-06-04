@@ -1,0 +1,64 @@
+<svg width="680" height="400" viewBox="0 0 680 400" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>.opensource logo</title>
+  <desc>Logo for the opensource-showcase project featuring a stylized merge symbol and dot notation</desc>
+
+  <style>
+    .bg { fill: #0a0d12; }
+    .ring-outer { fill: none; stroke: #1e3a5f; stroke-width: 1; }
+    .ring-mid { fill: none; stroke: #1e3a5f; stroke-width: 0.5; stroke-dasharray: 4 6; }
+    .node-main { fill: #3b82f6; }
+    .node-merged { fill: #22c55e; }
+    .node-branch { fill: #a855f7; }
+    .node-dot { fill: #06b6d4; }
+    .line-main { stroke: #3b82f6; stroke-width: 2.5; fill: none; }
+    .line-branch { stroke: #a855f7; stroke-width: 1.5; fill: none; stroke-dasharray: 5 3; }
+    .line-merge { stroke: #22c55e; stroke-width: 2; fill: none; }
+    .glow-blue { fill: #3b82f6; opacity: 0.08; }
+    .glow-green { fill: #22c55e; opacity: 0.08; }
+    .dot-text { font-family: 'JetBrains Mono', monospace; font-size: 42px; font-weight: 700; fill: #e2e8f0; letter-spacing: -1px; }
+    .dot-accent { fill: #3b82f6; }
+    .sub-text { font-family: 'JetBrains Mono', monospace; font-size: 13px; fill: #64748b; letter-spacing: 3px; }
+    .tag-text { font-family: 'JetBrains Mono', monospace; font-size: 10.5px; fill: #3b82f6; }
+    .tag-bg { fill: #0f1a2e; stroke: #1e3a5f; stroke-width: 1; }
+    .spark { fill: #f59e0b; }
+  </style>
+
+  <rect class="bg" width="680" height="400" rx="16"/>
+  <circle class="ring-outer" cx="160" cy="200" r="110"/>
+  <circle class="ring-mid" cx="160" cy="200" r="78"/>
+  <circle cx="160" cy="200" r="48" fill="#0f1a2e"/>
+  <circle class="glow-blue" cx="160" cy="130" r="36"/>
+  <circle class="glow-green" cx="160" cy="200" r="28"/>
+  <line class="line-main" x1="160" y1="110" x2="160" y2="270"/>
+  <path class="line-branch" d="M160 145 Q108 165 108 200 Q108 235 160 255"/>
+  <path class="line-merge" d="M108 200 Q134 200 160 200"/>
+  <circle class="node-branch" cx="160" cy="145" r="8"/>
+  <circle cx="160" cy="145" r="4" fill="#0a0d12"/>
+  <circle class="node-merged" cx="160" cy="200" r="11"/>
+  <circle cx="160" cy="200" r="5" fill="#0a0d12"/>
+  <circle class="node-main" cx="160" cy="255" r="8"/>
+  <circle cx="160" cy="255" r="4" fill="#0a0d12"/>
+  <circle class="node-branch" cx="108" cy="200" r="7"/>
+  <circle cx="108" cy="200" r="3" fill="#0a0d12"/>
+  <circle class="node-dot" cx="160" cy="110" r="5"/>
+  <circle class="node-dot" cx="160" cy="270" r="5"/>
+  <circle cx="212" cy="200" r="4" fill="#1e3a5f"/>
+  <circle cx="225" cy="175" r="2.5" fill="#1e3a5f"/>
+  <circle cx="225" cy="225" r="2.5" fill="#1e3a5f"/>
+  <circle cx="200" cy="155" r="2" fill="#1e3a5f"/>
+  <circle cx="200" cy="245" r="2" fill="#1e3a5f"/>
+  <circle class="spark" cx="128" cy="138" r="2"/>
+  <circle class="spark" cx="192" cy="162" r="1.5"/>
+  <circle cx="118" cy="230" r="1.5" fill="#a855f7" opacity="0.6"/>
+  <circle cx="195" cy="238" r="1.5" fill="#22c55e" opacity="0.6"/>
+  <text x="300" y="185" class="dot-text"><tspan class="dot-accent">.</tspan>opensource</text>
+  <text x="302" y="218" class="sub-text">SHOWCASE</text>
+  <rect x="300" y="238" width="176" height="22" rx="4" class="tag-bg"/>
+  <text x="308" y="253" class="tag-text">$ npx opensource-showcase</text>
+  <circle cx="634" cy="72" r="18" fill="#0f1a2e" stroke="#1e3a5f" stroke-width="1"/>
+  <circle cx="634" cy="72" r="5" fill="#22c55e"/>
+  <circle cx="634" cy="72" r="9" fill="none" stroke="#22c55e" stroke-width="1" opacity="0.3"/>
+  <circle cx="54" cy="320" r="12" fill="#0f1a2e" stroke="#1e3a5f" stroke-width="0.5"/>
+  <circle cx="54" cy="320" r="4" fill="#a855f7" opacity="0.7"/>
+  <circle cx="620" cy="330" r="6" fill="#3b82f6" opacity="0.2" stroke="#3b82f6" stroke-width="0.5"/>
+</svg>
