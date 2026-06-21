@@ -34,7 +34,11 @@
     "portfolio",
     "cli"
   ],
-  "author": "Your Name <your.email@example.com>",
+  "author": {
+    "name": "Hasitha Sandun",
+    "email": "hasiofficial2002@gmail.com",
+    "url": "https://github.com/hasithasandunlakshan"
+  },
   "license": "MIT",
   "repository": {
     "type": "git",

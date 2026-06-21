@@ -4,6 +4,7 @@
  * CLI entry point for opensource-showcase
  */
 
+import { createRequire } from 'module';
 import { Command } from 'commander';
 import chalk from 'chalk';
 import { logger } from './utils/logger.js';
@@ -23,12 +24,15 @@ import {
   setupBotCommand,
 } from './commands/showcase.js';
 
+const _require = createRequire(import.meta.url);
+const { version } = _require('../package.json') as { version: string };
+
 const program = new Command();
 
 program
   .name('opensource-showcase')
   .description('📦 CLI tool to curate and showcase your open source contributions')
-  .version('0.1.0');
+  .version(version);
 
 // Main command
 program
@@ -218,7 +222,7 @@ function handleError(error: unknown): void {
 
   logger.newline();
   logger.plain(chalk.gray('Need help? Run with --debug flag for more information'));
-  logger.plain(chalk.gray('Report issues: https://github.com/opensource-showcase/cli/issues'));
+  logger.plain(chalk.gray('Report issues: https://github.com/opensource-showcase/opensource-showcase/issues'));
   logger.newline();
 
   process.exit(1);

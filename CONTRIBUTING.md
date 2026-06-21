@@ -20,6 +20,8 @@ git clone https://github.com/<your-username>/opensource-showcase.git
 cd opensource-showcase
 ```
 
+> The upstream repository is at https://github.com/opensource-showcase/opensource-showcase
+
 2. Install dependencies:
 
 ```bash
@@ -74,6 +76,26 @@ npm run dev
 - Use `PascalCase` for classes and interfaces
 - Use `UPPER_SNAKE_CASE` for constants
 - Prefix private methods with underscore: `_privateMethod()`
+
+## GitHub OAuth Client ID
+
+The file `src/auth/github-auth.ts` contains a public OAuth App Client ID:
+
+```ts
+const CLIENT_ID: string = 'Ov23li4P4stPDon9vAt1';
+```
+
+**This is intentional and not a security vulnerability.**
+
+Per [GitHub's OAuth Device Flow specification](https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow), the Client ID for an OAuth App is a public identifier — similar to an app's username. It is:
+
+- ✅ Safe to commit to source code
+- ✅ Safe to distribute in published npm packages
+- ✅ Designed to be embedded in CLI tools
+
+The OAuth Device Flow does **not** use a Client Secret. Users authorize via a browser verification code, so there is no credential to protect here.
+
+> **Do not replace** this value unless you are forking the project to create your own OAuth App registration.
 
 ## Project Structure
 
@@ -278,7 +300,7 @@ If publishing for the first time:
 
    ```bash
    npm pack
-   npm install -g ./opensource-showcase-0.x.x.tgz
+   npm install -g ./opensource-showcase-*.tgz
    opensource-showcase --help
    npm uninstall -g opensource-showcase
    ```
