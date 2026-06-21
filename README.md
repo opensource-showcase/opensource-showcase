@@ -1,7 +1,7 @@
 # opensource-showcase
 
 <p align="center">
-  <img width="800" alt="opensource-showcase" src="https://raw.githubusercontent.com/opensource-showcase/opensource-showcase/main/images/logo-banner.png">
+  ![opensource-showcase](images/logo-banner.png)
 </p>
 
 <p align="center">
