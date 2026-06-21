@@ -13,7 +13,7 @@ export function generateHeader(
   }
 ): string {
   const { username, name, profile_url, bio, location, website, twitter } = contributor;
-  const displayName = name || username;
+  const displayName = name ?? username;
   const avatarUrl = `https://github.com/${username}.png`;
   const webPortfolioUrl = `https://${username}.github.io/.opensource/`;
 
@@ -32,7 +32,7 @@ export function generateHeader(
 
 **Open Source Contributor**${location ? ` • ${location}` : ''}
 
-${bio || `Passionate about building impactful open source software`}
+${bio ?? `Passionate about building impactful open source software`}
 
 ${links.join(' • ')}
 

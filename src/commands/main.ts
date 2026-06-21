@@ -127,7 +127,7 @@ export async function mainFlow(options: CLIOptions): Promise<void> {
 
         // Extract PR number from URL
         const prMatch = pr.html_url.match(/\/pull\/(\d+)$/);
-        const prNumber = prMatch ? parseInt(prMatch[1] || '0', 10) : 0;
+        const prNumber = prMatch ? parseInt(prMatch[1] ?? '0', 10) : 0;
 
         if (!prNumber) continue;
 

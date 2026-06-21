@@ -27,7 +27,7 @@ export function generateProjectSection(
   return `
 ### <img src="https://github.com/${owner}.png" width="28" height="28" align="absmiddle" alt="${owner}"> [${repo}](https://github.com/${repo})
 
-${repo_description || 'Open source project'}
+${repo_description ?? 'Open source project'}
 
 **${count} contribution${count !== 1 ? 's' : ''}** • ${language ? `${language}` : ''} • **★ ${stars}**
 

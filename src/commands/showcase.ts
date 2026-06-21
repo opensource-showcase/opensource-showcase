@@ -39,14 +39,14 @@ interface ParsedCommand {
 const COMMAND_ISSUE_TITLE = 'Showcase commands';
 
 function createGitHubClient(): Octokit {
-  const token = process.env.GITHUB_TOKEN || getStoredToken();
+  const token = process.env.GITHUB_TOKEN ?? getStoredToken();
   return createGitHubOctokit(token);
 }
 
 function parsePullRequestUrl(value: string): PullRequestRef {
   const match = value.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/pull\/(\d+)\/?$/);
 
-  if (!match || !match[1] || !match[2] || !match[3]) {
+  if (!match?.[1] || !match[2] || !match[3]) {
     throw new ValidationError(
       'Expected a GitHub pull request URL, like https://github.com/owner/repo/pull/123'
     );
@@ -66,8 +66,8 @@ async function loadLocalContributions(filePath = CONTRIBUTIONS_FILE): Promise<Co
     const data = JSON.parse(content) as unknown;
     validateContributionsSchema(data);
     return data as ContributionsData;
-  } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+  } catch (error: unknown) {
+    if ((error as { code?: string }).code === 'ENOENT') {
       throw new ValidationError(
         `Could not find ${filePath}. Run this command from the .opensource repository checkout.`
       );
@@ -112,7 +112,7 @@ async function fetchContribution(
       pull_number: prRef.number,
     });
     pr = data;
-  } catch (error) {
+  } catch (error: unknown) {
     const err = error as { status?: number };
     if (err.status === 404) {
       throw new ValidationError(
@@ -228,7 +228,7 @@ export function parseShowcaseCommand(body: string): ParsedCommand {
 
   for (const line of lines) {
     const match = line.match(/^(?:\/|@)?showcase\s+(add|remove|refresh)(?:\s+(\S+))?/i);
-    if (!match || !match[1]) continue;
+    if (!match?.[1]) continue;
 
     const action = match[1].toLowerCase() as ShowcaseAction;
     const prUrl = match[2];
@@ -271,7 +271,7 @@ export async function setupBotCommand(): Promise<void> {
       owner: user.login,
       repo: OPENSOURCE_REPO_NAME,
     });
-  } catch (error) {
+  } catch (error: unknown) {
     const err = error as { status?: number };
     if (err.status === 404) {
       throw new RepositoryError(
@@ -286,7 +286,7 @@ export async function setupBotCommand(): Promise<void> {
 
   try {
     await upsertWorkflowFile(octokit, user.login, workflowContent, workflowSha);
-  } catch (error) {
+  } catch (error: unknown) {
     const err = error as { status?: number; message?: string };
 
     if (err.status === 403 || err.status === 404) {
@@ -307,7 +307,7 @@ export async function setupBotCommand(): Promise<void> {
 
 async function getWorkflowFileSha(octokit: Octokit, username: string): Promise<string | undefined> {
   try {
-    const { data } = await octokit.request(
+    const response = await octokit.request(
       'GET /repos/{owner}/{repo}/contents/.github/workflows/showcase-command.yml',
       {
         owner: username,
@@ -315,7 +315,8 @@ async function getWorkflowFileSha(octokit: Octokit, username: string): Promise<s
       }
     );
 
-    return !Array.isArray(data) && 'sha' in data ? data.sha : undefined;
+    const data = response.data as { sha?: string } | { sha?: string }[];
+    return !Array.isArray(data) && data.sha ? data.sha : undefined;
   } catch (error) {
     const err = error as { status?: number };
     if (err.status === 404) return undefined;

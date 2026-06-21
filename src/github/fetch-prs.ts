@@ -43,7 +43,8 @@ export async function fetchMergedPRs(
     const perPage = 100;
     const MAX_RESULTS = 1000; // GitHub Search API hard limit
 
-    while (true) {
+    /* eslint-disable-next-line prefer-const */
+    let hasMore = true; while (hasMore) {
       // Check rate limit before each request
       await waitForRateLimit(octokit, 10);
 
@@ -179,8 +180,8 @@ export async function fetchPRDetails(
       const approvedReviewers = reviews
         .filter((review) => review.state === 'APPROVED')
         .map((review) => ({
-          login: review.user?.login || '',
-          avatar_url: review.user?.avatar_url || '',
+          login: review.user?.login ?? '',
+          avatar_url: review.user?.avatar_url ?? '',
         }))
         .filter((r) => r.login); // Remove empty logins
 
@@ -195,13 +196,13 @@ export async function fetchPRDetails(
     }
 
     return {
-      additions: data.additions,
-      deletions: data.deletions,
-      changed_files: data.changed_files,
-      body: data.body,
+      additions: data.additions ?? 0,
+      deletions: data.deletions ?? 0,
+      changed_files: data.changed_files ?? 0,
+      body: data.body ?? null,
       reviewers,
-      merged_by: data.merged_by?.login || null,
-      labels: (data.labels ?? []).map((label) => ({
+      merged_by: data.merged_by?.login ?? null,
+      labels: (data.labels ?? []).map((label: string | { name?: string }) => ({
         name: typeof label === 'string' ? label : (label.name ?? ''),
       })),
     };
@@ -245,7 +246,7 @@ export async function enrichPRsWithMetadata(
 
       // Extract owner and repo from PR URL
       const match = prUrl.match(/github\.com\/([^/]+)\/([^/]+)\/pull/);
-      if (!match || !match[1] || !match[2]) {
+      if (!match?.[1] || !match[2]) {
         continue;
       }
 
@@ -263,7 +264,7 @@ export async function enrichPRsWithMetadata(
       }
 
       // Early filtering: skip low-star repos to save API calls
-      if (minStars > 0 && repository.stargazers_count < minStars) {
+      if (minStars > 0 && (repository.stargazers_count ?? 0) < minStars) {
         skipped++;
         continue;
       }
@@ -279,9 +280,9 @@ export async function enrichPRsWithMetadata(
         pr_url: pr.html_url,
         pr_body: prDetails.body ?? undefined,
         merged_at: pr.merged_at ?? new Date().toISOString(),
-        language: repository.language,
-        repo_stars: repository.stargazers_count,
-        repo_description: repository.description,
+        language: repository.language ?? null,
+        repo_stars: repository.stargazers_count ?? 0,
+        repo_description: repository.description ?? null,
         labels: (prDetails.labels ?? []).map((l) => l.name),
         additions: prDetails.additions ?? 0,
         deletions: prDetails.deletions ?? 0,

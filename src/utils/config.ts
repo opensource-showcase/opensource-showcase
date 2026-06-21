@@ -33,7 +33,7 @@ export async function getUserConfig(): Promise<UserConfig> {
       ...userConfig,
     };
   } catch (error) {
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+    if ((error as { code?: string }).code === 'ENOENT') {
       // File doesn't exist, return defaults
       return DEFAULT_CONFIG;
     }

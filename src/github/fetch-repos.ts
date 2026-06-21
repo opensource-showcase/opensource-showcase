@@ -45,7 +45,7 @@ export async function fetchContributedRepositories(
 
       // Extract owner/repo from URL
       const match = item.repository_url.match(/repos\/([^/]+)\/([^/]+)$/);
-      if (!match || !match[1] || !match[2]) return;
+      if (!match?.[1] || !match[2]) return;
 
       const [, owner, name] = match;
       const fullName = `${owner}/${name}`;

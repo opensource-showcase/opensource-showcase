@@ -11,7 +11,6 @@ import type { ContributedRepo } from '../github/fetch-repos.js';
 import type { SaveContributionsResult } from '../repo/manage-repo.js';
 
 const { Separator } = inquirer;
-type Separator = InstanceType<typeof inquirer.Separator>;
 
 interface ContributionChoice {
   name: string;
@@ -133,7 +132,7 @@ export async function selectRepositories(
   });
 
   // Combine with separator
-  const allChoices: (RepoChoice | Separator)[] = [...otherChoices];
+  const allChoices: (RepoChoice | InstanceType<typeof inquirer.Separator>)[] = [...otherChoices];
 
   if (ownChoices.length > 0) {
     allChoices.push(
@@ -233,8 +232,10 @@ export async function selectContributions(
     .filter((c) => selectedUrls.has(c.pr_url))
     .map((c) => {
       // Remove filter metadata
-      const { filtered, filterReason, ...contribution } = c;
-      return contribution;
+      const contribution: Partial<ContributionWithFilter> = { ...c };
+      delete contribution.filtered;
+      delete contribution.filterReason;
+      return contribution as EnrichedContribution;
     });
 
   logger.newline();

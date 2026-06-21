@@ -82,7 +82,7 @@ export async function validateCommand(filePath: string): Promise<void> {
     }
 
     logger.newline();
-  } catch (error) {
+  } catch (error: unknown) {
     if (error instanceof SyntaxError) {
       throw new ValidationError('Invalid JSON syntax');
     }
@@ -91,7 +91,7 @@ export async function validateCommand(filePath: string): Promise<void> {
       throw error;
     }
 
-    if ((error as NodeJS.ErrnoException).code === 'ENOENT') {
+    if ((error as { code?: string }).code === 'ENOENT') {
       throw new ValidationError(`File not found: ${filePath}`);
     }
 

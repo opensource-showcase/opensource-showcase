@@ -11,7 +11,7 @@ export function generateSite(data: ContributionsData): string {
   const contributions = data.contributions.filter((contribution) => contribution.showcase);
   const stats = calculateStats(contributions);
   const grouped = groupByRepository(contributions);
-  const displayName = data.contributor.name || data.contributor.username;
+  const displayName = data.contributor.name ?? data.contributor.username;
   const pageTitle = `${displayName} - Open Source Contributions`;
 
   return `<!doctype html>

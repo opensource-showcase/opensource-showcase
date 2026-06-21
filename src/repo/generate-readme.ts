@@ -24,7 +24,7 @@ function calculateStats(contributions: EnrichedContribution[]): {
   contributions.forEach((c) => {
     // Count languages
     if (c.language) {
-      languages[c.language] = (languages[c.language] || 0) + 1;
+      languages[c.language] = (languages[c.language] ?? 0) + 1;
     }
 
     // Count unique repos
@@ -93,8 +93,8 @@ export function generateReadme(
 
   const grouped = groupByRepository(contributions);
   const sortedRepos = [...grouped.entries()].sort((a, b) => {
-    const aStars = a[1][0]?.repo_stars || 0;
-    const bStars = b[1][0]?.repo_stars || 0;
+    const aStars = a[1][0]?.repo_stars ?? 0;
+    const bStars = b[1][0]?.repo_stars ?? 0;
     return bStars - aStars;
   });
 

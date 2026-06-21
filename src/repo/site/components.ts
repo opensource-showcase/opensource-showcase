@@ -13,7 +13,7 @@ function renderMergeIcon(): string {
 }
 
 export function renderHero(contributor: Contributor, _stats: SiteStats): string {
-  const displayName = contributor.name || contributor.username;
+  const displayName = contributor.name ?? contributor.username;
 
   return `<nav class="navbar">
       <div class="shell navbar-inner">

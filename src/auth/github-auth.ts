@@ -162,7 +162,7 @@ export async function waitForRateLimit(octokit: Octokit, minRemaining = 10): Pro
 
     const spinner = ora('Waiting for rate limit reset...').start();
 
-    await new Promise((resolve) => setTimeout(resolve, waitMs));
+    await new Promise((resolve) => globalThis.setTimeout(resolve, waitMs));
 
     spinner.succeed('Rate limit reset. Continuing...');
   }

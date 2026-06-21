@@ -16,6 +16,7 @@ import { logoutCommand } from './commands/logout.js';
 import { configCommand } from './commands/config.js';
 import { validateCommand } from './commands/validate.js';
 import { whoamiCommand } from './commands/whoami.js';
+import type { CLIOptions } from './types/index.js';
 import {
   addContributionCommand,
   issueCommand,
@@ -43,9 +44,9 @@ program
   .option('--since <date>', 'Only fetch PRs merged after this date (YYYY-MM-DD)')
   .option('--fresh', 'Start fresh, ignore existing contributions')
   .option('--debug', 'Enable debug logging')
-  .action(async (options) => {
+  .action(async (options: CLIOptions) => {
     try {
-      if (options.debug) {
+      if (options?.debug) {
         process.env.DEBUG = 'true';
       }
       await mainFlow(options);
@@ -107,7 +108,7 @@ program
   .command('config')
   .description('Show current configuration')
   .option('--edit', 'Open configuration file in editor')
-  .action(async (options) => {
+  .action(async (options: { edit?: boolean }) => {
     try {
       await configCommand(options);
     } catch (error) {
@@ -120,7 +121,7 @@ program
   .command('validate')
   .description('Validate contributions.json schema')
   .argument('[file]', 'Path to contributions.json file', 'contributions.json')
-  .action(async (file) => {
+  .action(async (file: string) => {
     try {
       await validateCommand(file);
     } catch (error) {
@@ -133,7 +134,7 @@ program
   .command('add')
   .description('Add one merged PR to an existing .opensource checkout')
   .argument('<pr-url>', 'GitHub pull request URL')
-  .action(async (prUrl) => {
+  .action(async (prUrl: string) => {
     try {
       await addContributionCommand(prUrl);
     } catch (error) {
@@ -146,7 +147,7 @@ program
   .command('remove')
   .description('Remove one PR from an existing .opensource checkout')
   .argument('<pr-url>', 'GitHub pull request URL')
-  .action(async (prUrl) => {
+  .action(async (prUrl: string) => {
     try {
       await removeContributionCommand(prUrl);
     } catch (error) {
@@ -171,7 +172,7 @@ program
   .command('command')
   .description('Run a /showcase command from an issue or issue comment body')
   .argument('<body>', 'Issue or comment body containing a /showcase command')
-  .action(async (body) => {
+  .action(async (body: string) => {
     try {
       await issueCommand(body);
     } catch (error) {
