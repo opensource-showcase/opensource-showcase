@@ -27,7 +27,7 @@
     "format:check": "prettier --check \"**/*.{ts,json,md}\"",
     "type-check": "tsc --noEmit",
     "prepublishOnly": "npm run type-check && npm run lint && npm run test:run && npm run build",
-    "postpublish": "git tag v$(node -p \"require('./package.json').version\")"
+    "postpublish": "git tag -f v$(node -p \"require('./package.json').version\")"
   },
   "keywords": [
     "opensource",
