@@ -5,9 +5,6 @@ test/
 *.spec.ts
 
 # Images
-# images/ is intentionally included via the "files" field in package.json.
-# README.md references images/logo-banner.png with a relative path,
-# which npmjs.com needs in the package bundle to render the logo correctly.
 
 # Environment
 .env
