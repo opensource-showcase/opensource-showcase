@@ -13,7 +13,15 @@ import { storeToken, storeUsername, storeUser, getStoredToken } from '../utils/c
 import type { AuthContext } from '../types/index.js';
 import { createOctokit } from '../github/octokit.js';
 
-const PLACEHOLDER_CLIENT_ID: string = 'YOUR_PUBLIC_CLIENT_ID_HERE';
+/**
+ * GitHub OAuth App Client ID.
+ *
+ * Per GitHub's OAuth Device Flow specification, the Client ID for an OAuth App
+ * is NOT a secret — it is intentionally public and safe to distribute in CLI tools.
+ * See: https://docs.github.com/en/apps/oauth-apps/building-oauth-apps/authorizing-oauth-apps#device-flow
+ *
+ * Only the Client Secret would be sensitive, and this flow does NOT use one.
+ */
 const CLIENT_ID: string = 'Ov23li4P4stPDon9vAt1';
 const CLIENT_TYPE = 'oauth-app';
 
@@ -25,11 +33,6 @@ interface OAuthTokenResponse {
  * Authenticate with GitHub using Device Flow
  */
 export async function authenticateWithGitHub(): Promise<AuthContext> {
-  if (!isOAuthConfigured()) {
-    throw new AuthenticationError(
-      'GitHub OAuth is not configured. Replace YOUR_PUBLIC_CLIENT_ID_HERE in src/auth/github-auth.ts before publishing.'
-    );
-  }
 
   const spinner = ora('Authenticating with GitHub...').start();
 
@@ -84,8 +87,12 @@ export async function authenticateWithGitHub(): Promise<AuthContext> {
 /**
  * Check whether the packaged CLI has a usable GitHub OAuth client ID.
  */
+/**
+ * Returns true if a Client ID is configured.
+ * The OAuth Device Flow Client ID is intentionally public — not a secret.
+ */
 export function isOAuthConfigured(): boolean {
-  return CLIENT_ID.trim().length > 0 && CLIENT_ID !== PLACEHOLDER_CLIENT_ID;
+  return CLIENT_ID.trim().length > 0;
 }
 
 /**
