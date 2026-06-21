@@ -433,8 +433,8 @@ export function renderStyles(): string {
 }
 
 export function renderScript(): string {
-  return `<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  return `<script src="https://cdn.jsdelivr.net/npm/marked@18.0.5/marked.min.js" integrity="sha384-tkjnnf9Tzhv5ZFrDroGvUExw9C3EVFo0RFRkzKR8ZX4b5Psoec4yb1PlD8Jh4j4H" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" integrity="sha384-JEyTNhjM6R1ElGoJns4U2Ln4ofPcqzSsynQkmEc/KGy6336qAZl70tDLufbkla+3" crossorigin="anonymous"></script>
     <script>
       function renderMarkdownDescriptions() {
         const descriptions = document.querySelectorAll('.description-details');
