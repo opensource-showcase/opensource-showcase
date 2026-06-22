@@ -1,6 +1,6 @@
 {
   "name": "opensource-showcase",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "CLI tool to curate and showcase your open source contributions",
   "type": "module",
   "main": "dist/cli.js",
