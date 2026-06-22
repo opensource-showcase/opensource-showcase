@@ -33,7 +33,6 @@ interface OAuthTokenResponse {
  * Authenticate with GitHub using Device Flow
  */
 export async function authenticateWithGitHub(): Promise<AuthContext> {
-
   const spinner = ora('Authenticating with GitHub...').start();
 
   try {

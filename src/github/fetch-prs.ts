@@ -44,7 +44,8 @@ export async function fetchMergedPRs(
     const MAX_RESULTS = 1000; // GitHub Search API hard limit
 
     /* eslint-disable-next-line prefer-const */
-    let hasMore = true; while (hasMore) {
+    let hasMore = true;
+    while (hasMore) {
       // Check rate limit before each request
       await waitForRateLimit(octokit, 10);
 

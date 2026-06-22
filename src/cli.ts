@@ -223,7 +223,9 @@ function handleError(error: unknown): void {
 
   logger.newline();
   logger.plain(chalk.gray('Need help? Run with --debug flag for more information'));
-  logger.plain(chalk.gray('Report issues: https://github.com/opensource-showcase/opensource-showcase/issues'));
+  logger.plain(
+    chalk.gray('Report issues: https://github.com/opensource-showcase/opensource-showcase/issues')
+  );
   logger.newline();
 
   process.exit(1);
