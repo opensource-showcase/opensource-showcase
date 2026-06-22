@@ -4,6 +4,9 @@
 
 import type { ContributionsData } from '../types/index.js';
 
+const SHOWCASE_UI_URL =
+  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1/dist/showcase-ui.js';
+
 function escapeHtml(value: string | number | null | undefined): string {
   return String(value ?? '')
     .replace(/&/g, '&amp;')
@@ -41,8 +44,15 @@ export function generateSite(data: ContributionsData): string {
     <title>${escapeHtml(pageTitle)}</title>
   </head>
   <body>
-    <div id="root"></div>
-    <script src="https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1/dist/showcase-ui.js" crossorigin="anonymous"></script>
+    <div id="root">
+      <main style="min-height:100vh;display:grid;place-items:center;padding:24px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#0f172a;">
+        <section style="max-width:520px;text-align:center;">
+          <h1 style="margin:0 0 8px;font-size:24px;line-height:1.2;">Loading open source portfolio...</h1>
+          <p style="margin:0;color:#475569;line-height:1.6;">If this message stays here, the showcase UI bundle could not be loaded from the CDN.</p>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="${SHOWCASE_UI_URL}" crossorigin="anonymous"></script>
   </body>
 </html>`;
 }
