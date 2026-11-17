@@ -37,6 +37,18 @@ jobs:
           node --version
           npm --version
 
+      - name: Check npm token authentication
+        shell: bash
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "$NODE_AUTH_TOKEN" ]; then
+            echo "::error::NPM_TOKEN is missing. Add it to this repository or its npm-production environment."
+            exit 1
+          fi
+          npm whoami --registry=https://registry.npmjs.org
+          echo "Token authentication succeeded. Package write access is checked by npm during publishing."
+
       - name: Install dependencies
         run: npm ci
 
@@ -68,7 +80,7 @@ jobs:
       # NPM_TOKEN must have publishing access to this package.
       # OIDC remains available if a matching Trusted Publisher is configured.
       - name: Publish to npm
-        run: npm publish --provenance --access public
+        run: npm publish --provenance --access public --registry=https://registry.npmjs.org --dry-run=false
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
