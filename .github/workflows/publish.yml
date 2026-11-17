@@ -52,26 +52,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Check if version changed
-        id: version_check
+      - name: Select and commit a fresh release version
+        shell: bash
         run: |
-          LOCAL_VERSION=$(node -p "require('./package.json').version")
-          NPM_VERSION=$(npm view opensource-showcase version 2>/dev/null || echo "0.0.0")
-          echo "local=$LOCAL_VERSION" >> "$GITHUB_OUTPUT"
-          echo "npm=$NPM_VERSION" >> "$GITHUB_OUTPUT"
-          if [ "$LOCAL_VERSION" != "$NPM_VERSION" ]; then
-            echo "changed=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      # Auto-bump patch if version hasn't been manually bumped
-      - name: Auto-bump version
-        if: steps.version_check.outputs.changed == 'false'
-        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PUBLISHED_VERSIONS=$(npm view "$PACKAGE_NAME" versions --json --registry=https://registry.npmjs.org)
+          export PUBLISHED_VERSIONS
+          NEXT_VERSION=$(node --input-type=commonjs -e '
+            const local = require("./package.json").version;
+            const published = JSON.parse(process.env.PUBLISHED_VERSIONS);
+            const versions = [local, ...[].concat(published)]
+              .filter(v => /^\d+\.\d+\.\d+$/.test(v))
+              .map(v => v.split(".").map(Number))
+              .sort((a, b) => b[0] - a[0] || b[1] - a[1] || b[2] - a[2]);
+            const [major, minor, patch] = versions[0];
+            console.log(`${major}.${minor}.${patch + 1}`);
+          ')
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          npm version patch -m "chore: release v%s [skip ci]"
+          npm version "$NEXT_VERSION" -m "chore: release v%s [skip ci]"
           git push --follow-tags
 
       - name: Run CI checks (Lint, Type-check, Test, Build)
