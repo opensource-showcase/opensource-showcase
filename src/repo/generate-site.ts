@@ -5,7 +5,7 @@
 import type { ContributionsData } from '../types/index.js';
 
 const SHOWCASE_UI_URL =
-  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1.1.0/dist/showcase-ui.js';
+  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1/dist/showcase-ui.js';
 
 function escapeHtml(value: string | number | null | undefined): string {
   return String(value ?? '')

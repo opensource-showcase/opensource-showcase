@@ -14,9 +14,9 @@ const data: ContributionsData = {
 };
 
 describe('generated notebook host page', () => {
-  it('loads the released notebook bundle and supplies its mount point', () => {
+  it('tracks workflow-published UI updates and supplies its mount point', () => {
     const html = generateSite(data);
-    expect(html).toContain('https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1.1.0/dist/showcase-ui.js');
+    expect(html).toContain('https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1/dist/showcase-ui.js');
     expect(html).toContain('<div id="root">');
     expect(html).toContain('crossorigin="anonymous"');
   });
