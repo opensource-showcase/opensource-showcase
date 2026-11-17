@@ -68,3 +68,22 @@ jobs:
       # Allow npm publish (not only npm stage publish) in that configuration.
       - name: Publish to npm using GitHub OIDC
         run: npm publish --provenance --access public
+
+      - name: Verify published version on npm
+        shell: bash
+        run: |
+          PACKAGE_NAME=$(node -p "require('./package.json').name")
+          PACKAGE_VERSION=$(node -p "require('./package.json').version")
+          for attempt in 1 2 3 4 5 6; do
+            if PUBLISHED_VERSION=$(npm view "$PACKAGE_NAME@$PACKAGE_VERSION" version --registry=https://registry.npmjs.org); then
+              if [ "$PUBLISHED_VERSION" = "$PACKAGE_VERSION" ]; then
+                echo "Verified $PACKAGE_NAME@$PACKAGE_VERSION is publicly available."
+                exit 0
+              fi
+            fi
+            if [ "$attempt" -lt 6 ]; then
+              sleep 10
+            fi
+          done
+          echo "::error::$PACKAGE_NAME@$PACKAGE_VERSION is not available on npm after publishing. Check the publish step result and npm authorization; provenance signing alone is not publication."
+          exit 1
