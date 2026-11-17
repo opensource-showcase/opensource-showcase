@@ -5,7 +5,7 @@
 import type { ContributionsData } from '../types/index.js';
 
 const SHOWCASE_UI_URL =
-  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1/dist/showcase-ui.js';
+  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1.1.0/dist/showcase-ui.js';
 
 function escapeHtml(value: string | number | null | undefined): string {
   return String(value ?? '')
@@ -29,7 +29,7 @@ export function generateSite(data: ContributionsData): string {
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="${escapeHtml(pageDesc)}" />
     
-    <!-- Open Graph / Facebook -->
+    <!-- Social sharing metadata -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="${escapeHtml(pageTitle)}" />
     <meta property="og:description" content="${escapeHtml(pageDesc)}" />
@@ -45,7 +45,7 @@ export function generateSite(data: ContributionsData): string {
   </head>
   <body>
     <div id="root">
-      <main style="min-height:100vh;display:grid;place-items:center;padding:24px;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f8fafc;color:#0f172a;">
+      <main style="min-height:100vh;display:grid;place-items:center;padding:24px;font-family:'Chalkboard SE',cursive;background:#f5f2e9;color:#232647;">
         <section style="max-width:520px;text-align:center;">
           <h1 style="margin:0 0 8px;font-size:24px;line-height:1.2;">Loading open source portfolio...</h1>
           <p style="margin:0;color:#475569;line-height:1.6;">If this message stays here, the showcase UI bundle could not be loaded from the CDN.</p>
