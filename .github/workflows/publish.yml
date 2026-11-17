@@ -64,7 +64,7 @@ jobs:
       - name: Run CI checks (Lint, Type-check, Test, Build)
         run: npm run prepublishOnly
 
-      - name: Publish to npm
+      # Configure this repository and publish.yml as a Trusted Publisher on npm.
+      # Allow npm publish (not only npm stage publish) in that configuration.
+      - name: Publish to npm using GitHub OIDC
         run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
