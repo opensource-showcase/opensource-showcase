@@ -12,6 +12,7 @@ concurrency:
 
 jobs:
   publish:
+    environment: npm-production
     runs-on: ubuntu-latest
     permissions:
       contents: write   # to push version bump commit
@@ -64,10 +65,12 @@ jobs:
       - name: Run CI checks (Lint, Type-check, Test, Build)
         run: npm run prepublishOnly
 
-      # Configure this repository and publish.yml as a Trusted Publisher on npm.
-      # Allow npm publish (not only npm stage publish) in that configuration.
-      - name: Publish to npm using GitHub OIDC
+      # NPM_TOKEN must have publishing access to this package.
+      # OIDC remains available if a matching Trusted Publisher is configured.
+      - name: Publish to npm
         run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       - name: Verify published version on npm
         shell: bash
