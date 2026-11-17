@@ -5,7 +5,7 @@
 import type { ContributionsData } from '../types/index.js';
 
 const SHOWCASE_UI_URL =
-  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1/dist/showcase-ui.js';
+  'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@1.1.1/dist/showcase-ui.js';
 
 function escapeHtml(value: string | number | null | undefined): string {
   return String(value ?? '')
@@ -52,7 +52,33 @@ export function generateSite(data: ContributionsData): string {
         </section>
       </main>
     </div>
-    <script type="module" src="${SHOWCASE_UI_URL}" crossorigin="anonymous"></script>
+    <script type="module">
+      const fallbackUrl = '${SHOWCASE_UI_URL}';
+      let uiUrl = fallbackUrl;
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 5000);
+      try {
+        const response = await fetch(
+          'https://data.jsdelivr.com/v1/package/resolve/npm/opensource-showcase-ui@1',
+          { cache: 'no-store', signal: controller.signal }
+        );
+        if (!response.ok) throw new Error('Could not resolve the UI version');
+        const { version } = await response.json();
+        if (/^1\\.\\d+\\.\\d+$/.test(version)) {
+          uiUrl = 'https://cdn.jsdelivr.net/npm/opensource-showcase-ui@' + version + '/dist/showcase-ui.js';
+        }
+      } catch {
+        // Keep the last known notebook release available when discovery is offline.
+      } finally {
+        clearTimeout(timeout);
+      }
+      try {
+        await import(uiUrl);
+      } catch (error) {
+        if (uiUrl === fallbackUrl) throw error;
+        await import(fallbackUrl);
+      }
+    </script>
   </body>
 </html>`;
 }
