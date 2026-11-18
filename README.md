@@ -109,6 +109,7 @@ opensource-showcase config       # View or edit configuration
 opensource-showcase logout       # Clear authentication
 opensource-showcase add <pr-url> # Add one PR from a local .opensource checkout
 opensource-showcase remove <pr-url> # Remove one PR from a local .opensource checkout
+opensource-showcase update-theme # Update website theme without changing contributions
 opensource-showcase refresh      # Refresh already selected PR metadata
 opensource-showcase setup-bot    # Install issue-command workflow in .opensource
 opensource-showcase --all        # Bypass filtering
@@ -292,3 +293,9 @@ MIT License. See [LICENSE](LICENSE) for details.
 - Report issues: https://github.com/opensource-showcase/opensource-showcase/issues
 - Documentation: https://github.com/opensource-showcase/opensource-showcase
 - NPM Package: https://www.npmjs.com/package/opensource-showcase
+
+### Updating the website theme from the bot
+
+Comment `/showcase theme update` on your **Showcase commands** issue. The bot regenerates `index.html` with the automatic UI loader, keeping `contributions.json` and `README.md` unchanged. The website then loads new compatible UI releases automatically. A UI source push must first finish the `core-ui` npm publishing workflow; the command does not publish UI source.
+
+Existing bot installations should run `npx --prefer-online opensource-showcase@latest setup-bot` once after this CLI release to update the workflow and command instructions. You can also run `npx --prefer-online opensource-showcase@latest update-theme` inside a local `.opensource` checkout.

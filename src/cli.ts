@@ -23,6 +23,7 @@ import {
   refreshContributionsCommand,
   removeContributionCommand,
   setupBotCommand,
+  updateThemeCommand,
 } from './commands/showcase.js';
 
 const _require = createRequire(import.meta.url);
@@ -162,6 +163,17 @@ program
   .action(async () => {
     try {
       await refreshContributionsCommand();
+    } catch (error) {
+      handleError(error);
+    }
+  });
+
+program
+  .command('update-theme')
+  .description('Update the website theme loader without changing contributions')
+  .action(async () => {
+    try {
+      await updateThemeCommand();
     } catch (error) {
       handleError(error);
     }

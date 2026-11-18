@@ -29,7 +29,7 @@ interface PullRequestRef {
   url: string;
 }
 
-type ShowcaseAction = 'add' | 'remove' | 'refresh';
+type ShowcaseAction = 'add' | 'remove' | 'refresh' | 'theme';
 
 interface ParsedCommand {
   action: ShowcaseAction;
@@ -220,6 +220,12 @@ export async function refreshContributionsCommand(): Promise<void> {
   logger.success(`Refreshed ${refreshed.length} contribution${refreshed.length === 1 ? '' : 's'}`);
 }
 
+export async function updateThemeCommand(): Promise<void> {
+  const data = await loadLocalContributions();
+  await writeFile(INDEX_FILE, generateSite(data), 'utf-8');
+  logger.success('Website theme loader updated. The page loads the current compatible UI release automatically.');
+}
+
 export function parseShowcaseCommand(body: string): ParsedCommand {
   const lines = body
     .split(/\r?\n/)
@@ -227,6 +233,9 @@ export function parseShowcaseCommand(body: string): ParsedCommand {
     .filter(Boolean);
 
   for (const line of lines) {
+    if (/^(?:\/|@)?showcase\s+theme(?:\s+update)?\s*$/i.test(line)) {
+      return { action: 'theme' };
+    }
     const match = line.match(/^(?:\/|@)?showcase\s+(add|remove|refresh)(?:\s+(\S+))?/i);
     if (!match?.[1]) continue;
 
@@ -241,7 +250,7 @@ export function parseShowcaseCommand(body: string): ParsedCommand {
   }
 
   throw new ValidationError(
-    'No showcase command found. Use /showcase add <pr-url>, showcase add <pr-url>, /showcase remove <pr-url>, or /showcase refresh.'
+    'No showcase command found. Use /showcase add <pr-url>, showcase add <pr-url>, /showcase remove <pr-url>, or /showcase refresh, or /showcase theme update.'
   );
 }
 
@@ -255,6 +264,11 @@ export async function issueCommand(body: string): Promise<void> {
 
   if (command.action === 'remove' && command.prUrl) {
     await removeContributionCommand(command.prUrl);
+    return;
+  }
+
+  if (command.action === 'theme') {
+    await updateThemeCommand();
     return;
   }
 
@@ -393,6 +407,7 @@ Use comments on this issue to update your open source showcase.
 | \`/showcase add <pr-url>\` | Adds one merged public pull request to \`contributions.json\`, then regenerates \`README.md\` and \`index.html\`. |
 | \`showcase add <pr-url>\` | Same as above, without the slash. |
 | \`/showcase remove <pr-url>\` | Removes that pull request from your showcase and regenerates the files. |
+| \`/showcase theme update\` | Updates the website theme loader without changing contributions or re-fetching PR data. |
 | \`/showcase refresh\` | Re-fetches metadata for pull requests already in your showcase: title, description, stars, language, additions, deletions, files changed, reviewers, and merge data. It does not discover or add new PRs. |
 
 ## Examples
@@ -402,6 +417,7 @@ Use comments on this issue to update your open source showcase.
 showcase add https://github.com/org/repo/pull/123
 /showcase remove https://github.com/org/repo/pull/123
 /showcase refresh
+/showcase theme update
 \`\`\`
 
 ## Notes
